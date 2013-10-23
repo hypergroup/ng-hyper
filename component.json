@@ -1,0 +1,25 @@
+{
+  "name": "ng-hyper",
+  "repo": "CamShaft/ng-hyper",
+  "description": "Hyper tools for angular",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "CamShaft/hyper-path": "*",
+    "CamShaft/websafe-base64": "*",
+    "yields/slug": "*",
+    "component/map": "*"
+  },
+  "development": {},
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js",
+    "package.js",
+    "controllers/hyper.js",
+    "directives/hyper-bind.js",
+    "directives/hyper-link.js",
+    "directives/hyper.js",
+    "lib/utils.js"
+  ]
+}
