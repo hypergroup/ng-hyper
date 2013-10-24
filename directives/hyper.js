@@ -36,7 +36,10 @@ package.directive('hyper', [
         var path = parts[0];
         var target = parts[1];
 
-        var req = $watchPath.call($scope, path, function(err, value) {
+        $watchPath.call($scope, path, function(err, value, req) {
+          // TODO come up with an error strategy
+          if (err) return console.error(err);
+
           $scope[target || req.target] = value;
           if (value === 0 || value) elem.css('display', '');
         });

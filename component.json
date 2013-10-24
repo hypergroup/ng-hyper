@@ -5,10 +5,13 @@
   "version": "0.0.1",
   "keywords": [],
   "dependencies": {
+    "CamShaft/hyper-emitter": "*",
     "CamShaft/hyper-path": "*",
     "CamShaft/websafe-base64": "*",
     "yields/slug": "*",
-    "component/map": "*"
+    "component/map": "*",
+    "component/url": "*",
+    "component/each": "*"
   },
   "development": {},
   "license": "MIT",

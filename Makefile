@@ -1,6 +1,6 @@
 
 build: components index.js
-	@component build
+	@component build --standalone ng-hyper
 
 components: component.json
 	@component install

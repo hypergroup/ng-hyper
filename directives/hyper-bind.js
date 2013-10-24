@@ -3,7 +3,8 @@
  */
 
 var package = require('../package');
-var request = require('hyper-path');
+var utils = require('../lib/utils');
+var $watchPath = utils.$watchPath;
 
 /**
  * hyperBind
@@ -19,6 +20,9 @@ package.directive('hyperBind', [
         if (!attrs.hyperProgressive) elem.css('display', 'none');
 
         $watchPath.call($scope, attrs.hyperBind, function(err, value) {
+          // TODO come up with an error strategy
+          if (err) return console.error(err);
+
           // display numbers correctly
           elem.text(value === 0 ? value : (value || ''));
           if (value === 0 || value) elem.css('display', '');

@@ -5,6 +5,12 @@
 exports = module.exports = require('./package');
 
 /**
+ * Expose the controller
+ */
+
+exports.controller = require('./controllers/hyper');
+
+/**
  * Expose the directives
  */
 
