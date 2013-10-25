@@ -17,7 +17,7 @@ package.directive('hyperBind', [
       restrict: 'A',
       link: function($scope, elem, attrs) {
         // disable hiding the element until loaded
-        if (!attrs.hyperProgressive) elem.css('display', 'none');
+        elem.addClass('ng-hyper-loading');
 
         $watchPath.call($scope, attrs.hyperBind, function(err, value) {
           // TODO come up with an error strategy
@@ -25,7 +25,7 @@ package.directive('hyperBind', [
 
           // display numbers correctly
           elem.text(value === 0 ? value : (value || ''));
-          if (value === 0 || value) elem.css('display', '');
+          if (value === 0 || value) elem.removeClass('ng-hyper-loading');
         });
       }
     };

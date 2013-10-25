@@ -24,5 +24,8 @@
     "directives/hyper-link.js",
     "directives/hyper.js",
     "lib/utils.js"
+  ],
+  "styles": [
+    "style.css"
   ]
 }

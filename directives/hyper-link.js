@@ -21,7 +21,7 @@ package.directive('hyperLink', [
   function() {
     return {
       link: function($scope, elem, attrs) {
-        if (!attrs.hyperProgressive) elem.css('display', 'none');
+        elem.addClass('ng-hyper-loading');
         
         var keys = parse(attrs.hyperLink);
 
@@ -40,7 +40,7 @@ package.directive('hyperLink', [
           if (!loaded && !attrs.hyperProgressive) return;
 
           elem.attr('href', href);
-          elem.css('display', '');
+          elem.removeClass('ng-hyper-loading');
         }, true);
       }
     };

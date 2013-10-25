@@ -17,9 +17,6 @@ var $watchPath = utils.$watchPath;
  *
  * You may also specify a binding name: `.account.name as firstName` and the
  * value of `.account.name` will be assigned to `$scope.firstName`.
- *
- * If the attribute `hyper-progressive` is set it will not, set `display: none;`
- * on the element as it is loading.
  */
 
 package.directive('hyper', [
@@ -29,7 +26,7 @@ package.directive('hyper', [
       restrict: 'A',
       link: function($scope, elem, attrs) {
         // disable hiding the element until loaded
-        if (!attrs.hyperProgressive) elem.css('display', 'none');
+        elem.addClass('ng-hyper-loading');
 
         // split the command to allow binding to arbitrary names
         var parts = attrs.hyper.split(' as ');
@@ -41,7 +38,7 @@ package.directive('hyper', [
           if (err) return console.error(err);
 
           $scope[target || req.target] = value;
-          if (value === 0 || value) elem.css('display', '');
+          if (value === 0 || value) elem.removeClass('ng-hyper-loading');
         });
       }
     };
