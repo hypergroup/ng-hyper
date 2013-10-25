@@ -31,7 +31,7 @@ package.directive('hyperLink', [
           var loaded = true;
 
           var href = attrs.hyperLink.replace(regexp, function(full, key) {
-            if ($scope[key]) return $scope[key];
+            if ($scope[key] || $scope[key] === 0) return fmt($scope[key]);
             loaded = false;
             return '-';
           });
@@ -64,5 +64,6 @@ function parse(link) {
 
 exports.fmt = fmt;
 function fmt(v) {
-  return (v && v.href ? encode(v.href) : slug(v || '')) || v;
+  if (v && v.href) return encode(v.href);
+  return slug(v);
 }

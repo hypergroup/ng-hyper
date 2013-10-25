@@ -35,7 +35,7 @@ package.controller('HyperController', [
       });
 
       // add the new params
-      each($routeParams, function(key) {
+      each($routeParams, function(key, value) {
         // ignore slugs
         if (key === 'slug') return;
 
