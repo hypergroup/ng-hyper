@@ -25,7 +25,10 @@ package.directive('hyperBind', [
 
           // display numbers correctly
           elem.text(value === 0 ? value : (value || ''));
-          if (value === 0 || value) elem.removeClass('ng-hyper-loading');
+          if (value !== 0 && !value) return;
+
+          elem.removeClass('ng-hyper-loading');
+          elem.addClass('ng-hyper-loaded');
         });
       }
     };

@@ -38,7 +38,10 @@ package.directive('hyper', [
           if (err) return console.error(err);
 
           $scope[target || req.target] = value;
-          if (value === 0 || value) elem.removeClass('ng-hyper-loading');
+          if (value !== 0 && !value) return;
+
+          elem.removeClass('ng-hyper-loading');
+          elem.addClass('ng-hyper-loaded');
         });
       }
     };
