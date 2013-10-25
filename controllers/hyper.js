@@ -21,7 +21,9 @@ package.controller('HyperController', [
     // keep track of current the subscriptions
     var subscriptions = {};
 
-    $scope.$watch($routeParams, function(newVal, oldVal) {
+    $scope.$watch(function() {
+      return $routeParams;
+    }, function(newVal, oldVal) {
 
       // clean up the old parameters/values
       each(oldVal, function(key, value) {
