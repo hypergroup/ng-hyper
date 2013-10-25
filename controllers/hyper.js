@@ -41,7 +41,12 @@ package.controller('HyperController', [
         // ignore slugs
         if (key === 'slug') return;
 
-        var href = decode(value);
+        // try decoding the parameter
+        var href;
+        try { href = decode(value); } catch(e) {}
+
+        // it didn't look like a valid url
+        if (!href) return;
 
         // if it doesn't look like a url don't do anything with it
         if (href.indexOf('http') !== 0 && href.indexOf('/') !== 0) return;
