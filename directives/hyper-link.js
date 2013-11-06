@@ -39,6 +39,9 @@ package.directive('hyperLink', [
           // we're still waiting for properties to come in
           if (!loaded) return;
 
+          // If we're in a browser that doesn't support push state
+          if (!window.history.pushState) href = '/#!' + href;
+
           elem.attr('href', href);
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
