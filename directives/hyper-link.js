@@ -23,7 +23,11 @@ package.directive('hyperLink', [
       link: function($scope, elem, attrs) {
         elem.addClass('ng-hyper-loading');
         
-        var keys = parse(attrs.hyperLink);
+        var href = attrs.hyperLink;
+        var keys = parse(href);
+
+        // If it doesn't have any templated properties just render it
+        if (!keys) return loadLink(href);
 
         var exp = '[' + keys.toString() + ']';
 
@@ -39,13 +43,14 @@ package.directive('hyperLink', [
           // we're still waiting for properties to come in
           if (!loaded) return;
 
-          // If we're in a browser that doesn't support push state
-          if (!window.history.pushState) href = '/#!' + href;
+          loadLink(href);
+        }, true);
 
+        function loadLink(href) {
           elem.attr('href', href);
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
-        }, true);
+        };
       }
     };
   }
@@ -57,7 +62,9 @@ package.directive('hyperLink', [
 
 exports.parse = parse;
 function parse(link) {
-  return map(link.match(regexp), function(key) {
+  var matches = link.match(regexp);
+  if (!matches) return;
+  return map(matches, function(key) {
     return key.substr(1);
   });
 }
