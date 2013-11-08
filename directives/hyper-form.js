@@ -42,19 +42,22 @@ package.directive('hyperForm', [
           // elem.attr('action', value.action);
 
           // Expose the list of shown inputs to the view
-          $scope.hyperInputs = {};
+          $scope.inputs = [];
           $scope.hyperValues = {};
 
           each(value.input, function(name, conf) {
-            if (conf.type !== 'hidden') return $scope.hyperInputs[name] = conf;
-            $scope.hyperValues[name] = conf.value || conf;
+            if (conf.type === 'hidden') return $scope.hyperValues[name] = conf.value || conf;
+            conf.name = name;
+            $scope.inputs.push(conf);
           });
 
           // TODO handle form validation
 
           // TODO fix this - it's ugly
           var form = elem[0];
-          form.onsubmit = function() {
+          form.onsubmit = $scope.submit;
+
+          $scope.submit = function() {
             $scope.hyperFormLoading = true;
             emitter.submit(value.method, value.action, $scope.hyperValues, onfinish);
           };
