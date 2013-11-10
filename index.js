@@ -19,6 +19,7 @@ exports.hyperBind = require('./directives/hyper-bind');
 exports.hyperBind = require('./directives/hyper-form');
 exports.hyperBind = require('./directives/hyper-input');
 exports.hyperLink = require('./directives/hyper-link');
+exports.hyperStyle = require('./directives/hyper-style');
 
 /**
  * Tell other modules how to load us
