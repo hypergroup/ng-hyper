@@ -1,0 +1,6 @@
+div(data-hyper=".reports")
+  div(data-ng-repeat="report in reports")
+    h1(data-hyper-bind="report.title")
+    form(data-hyper-form="report.search", data-hyper-action="/search/:query")
+      input(data-ng-repeat="input in inputs", data-hyper-input="input")
+      input(type="submit", value="submit")

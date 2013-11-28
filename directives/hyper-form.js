@@ -3,19 +3,21 @@
  */
 
 var package = require('../package');
-var client = require('hyperagent');
 var emitter = require('hyper-emitter');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
 var $safeApply = utils.$safeApply;
 var each = require('each');
+var createLink = require('./hyper-link').create;
+var qs = require('querystring');
 
 /**
  * hyperForm
  */
 
 package.directive('hyperForm', [
-  function() {
+  '$location',
+  function($location) {
     return {
       scope: true,
       link: function($scope, elem, attrs) {
@@ -43,10 +45,10 @@ package.directive('hyperForm', [
 
           // Expose the list of shown inputs to the view
           var inputs = $scope.inputs = [];
-          var values = {};
+          var values = $scope.values = {};
 
           each(value.input, function(name, conf) {
-            if (conf.type === 'hidden') return $scope.hyperValues[name] = conf.value || conf;
+            if (conf.type === 'hidden') return $scope.values[name] = typeof conf.value === 'undefined' ? conf : conf.value;
             conf.name = name;
             conf._value = conf.value;
             inputs.push(conf);
@@ -60,12 +62,25 @@ package.directive('hyperForm', [
             $scope.submit();
           };
 
+          function followLink() {
+            var url = value.action + '?' + qs.stringify($scope.values);
+            // TODO create a child scope
+            var res = createLink(attrs.hyperAction, {query: {href: url}});
+            if (!res.loaded) return;
+            $safeApply.call($scope, function() {
+              $location.path(res.href);
+            });
+          }
+
           $scope.submit = function() {
             $scope.hyperFormLoading = true;
             each(inputs, function(input) {
-              values[input.name] = input.value;
+              if (typeof input.value === 'undefined') return;
+              $scope.values[input.name] = input.value;
             });
-            emitter.submit(value.method, value.action, values, onfinish);
+            attrs.hyperAction && value.method === 'GET'
+              ? followLink()
+              : emitter.submit(value.method, value.action, $scope.values, onfinish);
           };
         });
 

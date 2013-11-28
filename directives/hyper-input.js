@@ -2,6 +2,7 @@
  * Module dependencies
  */
 
+var template = require('../templates/input.html');
 var package = require('../package');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
@@ -14,7 +15,7 @@ package.directive('hyperInput', [
   function() {
     return {
       replace: true,
-      template: '<input data-ng-model="input.value" data-ng-class="{\'ng-hyper-loading\': !input, \'ng-hyper-loaded\': input}" name="{{input.name}}" type="{{input.type}}" placeholder="{{input.prompt || input.placeholder || input.title || input.name}}" data-ng-required="input.required">',
+      template: template,
       scope: {
         input: '=hyperInput'
       }

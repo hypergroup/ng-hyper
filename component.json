@@ -8,11 +8,13 @@
     "CamShaft/hyper-emitter": "*",
     "CamShaft/hyper-path": "*",
     "CamShaft/hyperagent": "*",
-    "CamShaft/websafe-base64": "*",
     "yields/slug": "*",
     "component/map": "*",
     "component/url": "*",
-    "component/each": "*"
+    "component/each": "*",
+    "CamShaft/component-angular": "*",
+    "component/querystring": "*",
+    "CamShaft/url-pack": "*"
   },
   "development": {},
   "license": "MIT",
@@ -30,5 +32,8 @@
   ],
   "styles": [
     "style.css"
+  ],
+  "templates": [
+    "templates/input.html"
   ]
 }

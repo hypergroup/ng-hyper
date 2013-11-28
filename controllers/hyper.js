@@ -5,8 +5,8 @@
 var package = require('../package');
 var each = require('each');
 var request = require('hyper-emitter');
-var $safeApply = require('../lib/utils').$safeApply;
-var decode = require('websafe-base64').decode;
+var utils = require('../lib/utils');
+var $safeApply = utils.$safeApply;
 var isCrossDomain = require('url').isCrossDomain;
 
 /**
@@ -43,7 +43,7 @@ package.controller('HyperController', [
 
         // try decoding the parameter
         var href;
-        try { href = decode(value); } catch(e) {}
+        try { href = utils.decode(value); } catch(e) {}
 
         // it didn't look like a valid url
         if (!href) return;

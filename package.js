@@ -2,7 +2,7 @@
  * Module dependencies
  */
 
-var angular = window.angular
+var angular = window.angular || require('angular');
 
 /**
  * Expose the package

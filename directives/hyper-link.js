@@ -3,7 +3,7 @@
  */
 
 var package = require('../package');
-var encode = require('websafe-base64').encode;
+var utils = require('../lib/utils');
 var slug = require('slug');
 var map = require('map');
 
@@ -22,7 +22,7 @@ package.directive('hyperLink', [
     return {
       link: function($scope, elem, attrs) {
         elem.addClass('ng-hyper-loading');
-        
+
         var href = attrs.hyperLink;
         var keys = parse(href);
 
@@ -32,29 +32,34 @@ package.directive('hyperLink', [
         var exp = '[' + keys.toString() + ']';
 
         $scope.$watch(exp, function() {
-          var loaded = true;
-
-          var href = attrs.hyperLink.replace(regexp, function(full, key) {
-            if ($scope[key] || $scope[key] === 0) return fmt($scope[key]);
-            loaded = false;
-            return '-';
-          });
+          var res = create(attrs.hyperLink, $scope);
 
           // we're still waiting for properties to come in
-          if (!loaded) return;
+          if (!res.loaded) return;
 
-          loadLink(href);
+          loadLink(res.href);
         }, true);
 
         function loadLink(href) {
           elem.attr('href', href);
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
-        };
+        }
       }
     };
   }
 ]);
+
+exports.create = create;
+function create(href, $scope) {
+  var res = {loaded: true};
+  res.href = href.replace(regexp, function(full, key) {
+    if ($scope[key] || $scope[key] === 0) return fmt($scope[key]);
+    res.loaded = false;
+    return '-';
+  });
+  return res;
+};
 
 /**
  * Parse the link 
@@ -75,6 +80,6 @@ function parse(link) {
 
 exports.fmt = fmt;
 function fmt(v) {
-  if (v && v.href) return encode(v.href);
+  if (v && v.href) return utils.encode(v.href);
   return slug(v);
 }
