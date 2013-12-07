@@ -27,6 +27,7 @@
     "directives/hyper-form.js",
     "directives/hyper-input.js",
     "directives/hyper-link.js",
+    "directives/hyper-style.js",
     "directives/hyper.js",
     "lib/utils.js"
   ],
