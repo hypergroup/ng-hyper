@@ -29,7 +29,7 @@ package.directive('hyperForm', [
 
         $watchPath.call($scope, attrs.hyperForm, function(err, value) {
           // TODO come up with an error strategy
-          if (err) return console.error(err);
+          if (err) return console.error(err.stack || err);
 
           if (!value || !value.action) return;
 
@@ -49,9 +49,11 @@ package.directive('hyperForm', [
 
           each(value.input, function(name, conf) {
             if (conf.type === 'hidden') return $scope.values[name] = typeof conf.value === 'undefined' ? conf : conf.value;
-            conf.name = name;
-            conf._value = conf.value;
-            inputs.push(conf);
+            // We have to clone this object so hyper-path doesn't watch for changes on the model
+            inputs.push(merge({
+              model: conf.value,
+              name: name
+            }, conf));
           });
 
           // TODO handle form validation
@@ -75,8 +77,8 @@ package.directive('hyperForm', [
           $scope.submit = function() {
             $scope.hyperFormLoading = true;
             each(inputs, function(input) {
-              if (typeof input.value === 'undefined') return;
-              $scope.values[input.name] = input.value;
+              if (typeof input.model === 'undefined') return;
+              $scope.values[input.name] = input.model;
             });
             attrs.hyperAction && value.method === 'GET'
               ? followLink()
@@ -98,3 +100,10 @@ package.directive('hyperForm', [
 ]);
 
 function noop() {}
+
+function merge(a, b) {
+  for (var k in b) {
+    a[k] = b[k];
+  }
+  return a;
+}

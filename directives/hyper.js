@@ -35,7 +35,7 @@ package.directive('hyper', [
 
         $watchPath.call($scope, path, function(err, value, req) {
           // TODO come up with an error strategy
-          if (err) return console.error(err);
+          if (err) return console.error(err.stack || err);
 
           $scope[target || req.target] = value;
           if (value !== 0 && !value) return;

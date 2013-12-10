@@ -21,7 +21,7 @@ package.directive('hyperBind', [
 
         $watchPath.call($scope, attrs.hyperBind, function(err, value) {
           // TODO come up with an error strategy
-          if (err) return console.error(err);
+          if (err) return console.error(err.stack || err);
 
           // display numbers correctly
           elem.text(value === 0 ? value : (value || ''));

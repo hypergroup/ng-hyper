@@ -58,7 +58,7 @@ package.controller('HyperController', [
         subscriptions[key] = request
           .get(href, function(err, body) {
             // TODO come up with an error strategy
-            if (err) return console.error(err);
+            if (err) return console.error(err.stack || err);
 
             $safeApply.call($scope, function() {
               $scope[key] = body;
