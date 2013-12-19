@@ -45,7 +45,7 @@ package.directive('hyperForm', [
 
           // Expose the list of shown inputs to the view
           var inputs = $scope.inputs = [];
-          var values = $scope.values = {};
+          $scope.values = {};
 
           each(value.input, function(name, conf) {
             if (conf.type === 'hidden') return $scope.values[name] = typeof conf.value === 'undefined' ? conf : conf.value;
@@ -74,10 +74,15 @@ package.directive('hyperForm', [
             });
           }
 
+          $scope.set = function(name, value) {
+            $scope.values[name] = value;
+          };
+
           $scope.submit = function() {
             $scope.hyperFormLoading = true;
             each(inputs, function(input) {
               if (typeof input.model === 'undefined') return;
+              if ($scope.values[input.name]) return;
               $scope.values[input.name] = input.model;
             });
             attrs.hyperAction && value.method === 'GET'
@@ -90,6 +95,7 @@ package.directive('hyperForm', [
           $safeApply.call($scope, function() {
             delete $scope.hyperFormLoading;
             cb(err, res);
+            values = $scope.values = {};
             if (err) $scope.hyperFormError = err;
             // TODO what are other status that we want to expose?
           });
