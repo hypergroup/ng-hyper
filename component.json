@@ -14,7 +14,7 @@
     "component/each": "*",
     "CamShaft/component-angular": "*",
     "component/querystring": "*",
-    "CamShaft/url-pack": "*"
+    "CamShaft/websafe-base64": "*"
   },
   "development": {},
   "license": "MIT",
