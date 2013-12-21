@@ -11,7 +11,7 @@ var map = require('map');
  * Initialize our regular expression for url construction/deconstruction
  */
 
-var regexp = /:([\w-]+)/g;
+var regexp = /:([\w-\.]+)/g;
 
 /**
  * Register it with angular
