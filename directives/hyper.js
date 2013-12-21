@@ -7,6 +7,7 @@ var request = require('hyper-path');
 var each = require('each');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
+var merge = utils.merge;
 
 /**
  * hyper scope directive
@@ -41,7 +42,8 @@ package.directive('hyper', [
             // TODO come up with an error strategy
             if (err) return console.error(err.stack || err);
 
-            $scope[target || req.target] = value;
+            var t = target || req.target
+            $scope[t] = merge($scope[t], value);
             if (value !== 0 && !value) return;
 
             elem.removeClass('ng-hyper-loading');

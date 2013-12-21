@@ -12,6 +12,7 @@
     "component/map": "*",
     "component/url": "*",
     "component/each": "*",
+    "component/type": "*",
     "CamShaft/component-angular": "*",
     "component/querystring": "*",
     "CamShaft/websafe-base64": "*"

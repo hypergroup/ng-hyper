@@ -7,6 +7,7 @@ var each = require('each');
 var request = require('hyper-emitter');
 var utils = require('../lib/utils');
 var $safeApply = utils.$safeApply;
+var merge = utils.merge;
 var isCrossDomain = require('url').isCrossDomain;
 
 /**
@@ -61,7 +62,7 @@ package.controller('HyperController', [
             if (err) return console.error(err.stack || err);
 
             $safeApply.call($scope, function() {
-              $scope[key] = body;
+              $scope[key] = merge($scope[key], body);
             });
           });
       });
