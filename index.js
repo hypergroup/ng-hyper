@@ -17,6 +17,7 @@ exports.controller = require('./controllers/hyper');
 exports.hyper = require('./directives/hyper');
 exports.hyperBind = require('./directives/hyper-bind');
 exports.hyperBind = require('./directives/hyper-form');
+exports.hyperLink = require('./directives/hyper-img');
 exports.hyperBind = require('./directives/hyper-input');
 exports.hyperLink = require('./directives/hyper-link');
 

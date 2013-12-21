@@ -4,6 +4,7 @@
 
 var package = require('../package');
 var request = require('hyper-path');
+var each = require('each');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
 
@@ -28,20 +29,24 @@ package.directive('hyper', [
         // disable hiding the element until loaded
         elem.addClass('ng-hyper-loading');
 
-        // split the command to allow binding to arbitrary names
-        var parts = attrs.hyper.split(' as ');
-        var path = parts[0];
-        var target = parts[1];
+        var exprs = attrs.hyper.split(',');
 
-        $watchPath.call($scope, path, function(err, value, req) {
-          // TODO come up with an error strategy
-          if (err) return console.error(err.stack || err);
+        each(exprs, function(expr) {
+          // split the command to allow binding to arbitrary names
+          var parts = expr.trim().split(' as ');
+          var path = parts[0];
+          var target = parts[1];
 
-          $scope[target || req.target] = value;
-          if (value !== 0 && !value) return;
+          $watchPath.call($scope, path, function(err, value, req) {
+            // TODO come up with an error strategy
+            if (err) return console.error(err.stack || err);
 
-          elem.removeClass('ng-hyper-loading');
-          elem.addClass('ng-hyper-loaded');
+            $scope[target || req.target] = value;
+            if (value !== 0 && !value) return;
+
+            elem.removeClass('ng-hyper-loading');
+            elem.addClass('ng-hyper-loaded');
+          });
         });
       }
     };

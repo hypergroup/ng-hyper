@@ -18,7 +18,8 @@ var regexp = /:([\w-]+)/g;
  */
 
 package.directive('hyperLink', [
-  function() {
+  '$location',
+  function($location) {
     return {
       link: function($scope, elem, attrs) {
         elem.addClass('ng-hyper-loading');
@@ -26,8 +27,11 @@ package.directive('hyperLink', [
         var href = attrs.hyperLink;
         var keys = parse(href);
 
+        // watch the location and add an active class
+        $scope.$on('$locationChangeSuccess', updateActive);
+
         // If it doesn't have any templated properties just render it
-        if (!keys) return loadLink(href);
+        if (!keys) return loadLink();
 
         var exp = '[' + keys.toString() + ']';
 
@@ -37,13 +41,26 @@ package.directive('hyperLink', [
           // we're still waiting for properties to come in
           if (!res.loaded) return;
 
-          loadLink(res.href);
+          href = res.href;
+          loadLink();
         }, true);
 
-        function loadLink(href) {
+        function loadLink() {
           elem.attr('href', href);
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
+          updateActive();
+        }
+
+        var isActive = false;
+        function updateActive() {
+          if (href === ($location.url() || '/')) {
+            elem.addClass('active');
+            isActive = true;
+          } else if (isActive) {
+            elem.removeClass('active');
+            isActive = false;
+          }
         }
       }
     };

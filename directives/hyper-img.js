@@ -7,10 +7,10 @@ var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
 
 /**
- * hyperBind
+ * hyperImg
  */
 
-package.directive('hyperBind', [
+package.directive('hyperImg', [
   function() {
     return {
       scope: true,
@@ -19,14 +19,19 @@ package.directive('hyperBind', [
         // disable hiding the element until loaded
         elem.addClass('ng-hyper-loading');
 
-        $watchPath.call($scope, attrs.hyperBind, function(err, value, req) {
+        $watchPath.call($scope, attrs.hyperImg, function(err, value) {
           // TODO come up with an error strategy
           if (err) return console.error(err.stack || err);
 
-          // display numbers correctly
-          $scope[req.target] = value;
-          elem.text(value === 0 ? value : (value || ''));
-          if (value !== 0 && !value) return;
+          var isUndef = typeof value === 'undefined';
+
+          var src = isUndef ? '' : (value.src || value.href || value);
+          var title = isUndef ? '' : (value.title || value.alt || '');
+
+          // TODO add srcset
+          attrs.$set('src', src);
+          attrs.$set('alt', title);
+          if (isUndef) return;
 
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
