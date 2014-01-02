@@ -30,13 +30,13 @@ package.directive('hyperLink', [
         // watch the location and add an active class
         $scope.$on('$locationChangeSuccess', updateActive);
 
-	$watch.call($scope, href, function(formatted) {
-	  href = formatted;
+        $watch.call($scope, href, function(formatted) {
+          href = formatted;
           elem.attr('href', formatted);
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
           updateActive();
-   	});
+        });
 
         var isActive = false;
         function updateActive() {

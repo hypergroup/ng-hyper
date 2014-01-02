@@ -7,6 +7,7 @@ var emitter = require('hyper-emitter');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
 var $safeApply = utils.$safeApply;
+var merge = utils.merge;
 var each = require('each');
 var createLink = require('./hyper-link').create;
 var qs = require('querystring');
@@ -20,14 +21,15 @@ package.directive('hyperForm', [
   function($location) {
     return {
       scope: true,
-      link: function($scope, elem, attrs) {
+      require: 'form',
+      link: function($scope, elem, attrs, form) {
         // disable hiding the element until loaded
         elem.addClass('ng-hyper-loading');
 
         // get a user-specified callback
         var cb = attrs.hyperHandle ? $scope.$eval(attrs.hyperHandle) : noop;
 
-        $watchPath.call($scope, attrs.hyperForm, function(err, value) {
+        $watchPath.call($scope, attrs.hyperForm, function(err, value, req) {
           // TODO come up with an error strategy
           if (err) return console.error(err.stack || err);
 
@@ -43,26 +45,29 @@ package.directive('hyperForm', [
           // elem.attr('method', value.method || 'GET');
           // elem.attr('action', value.action);
 
+          // We're in the middle of editing our form
+          if (form.$dirty) return;
+
           // Expose the list of shown inputs to the view
-          var inputs = $scope.inputs = [];
           $scope.values = {};
 
+          var ins = [];
           each(value.input, function(name, conf) {
             if (conf.type === 'hidden') return $scope.values[name] = typeof conf.value === 'undefined' ? conf : conf.value;
             // We have to clone this object so hyper-path doesn't watch for changes on the model
-            inputs.push(merge({
+            var input = smerge({
               model: conf.value,
               name: name
-            }, conf));
+            }, conf);
+            ins.push(input);
+            ins[name] = input;
           });
+          var inputs = $scope.inputs = merge($scope.inputs, ins);
 
-          // TODO handle form validation
-
-          // TODO fix this - it's ugly
-          var form = elem[0];
-          form.onsubmit = function() {
+          elem.bind('submit', function() {
+            // TODO if the method is idempotent and the form is pristine don't submit
             $scope.submit();
-          };
+          });
 
           function followLink() {
             var url = value.action + '?' + qs.stringify($scope.values);
@@ -76,6 +81,7 @@ package.directive('hyperForm', [
 
           $scope.set = function(name, value) {
             $scope.values[name] = value;
+            if ($scope.inputs[name]) $scope.inputs[name].model = value;
           };
 
           $scope.submit = function() {
@@ -94,8 +100,9 @@ package.directive('hyperForm', [
         function onfinish(err, res) {
           $safeApply.call($scope, function() {
             delete $scope.hyperFormLoading;
+            $setPristine(form);
             cb(err, res);
-            values = $scope.values = {};
+            $scope.values = {};
             if (err) $scope.hyperFormError = err;
             // TODO what are other status that we want to expose?
           });
@@ -105,9 +112,19 @@ package.directive('hyperForm', [
   }
 ]);
 
+function $setPristine(form) {
+  if (form.$setPristine) return form.$setPristine();
+  form.$pristine = true;
+  form.$dirty = false;
+  each(form, function(input, key) {
+    if (input.$pristine) input.$pristine = true;
+    if (input.$dirty) input.$dirty = false;
+  });
+}
+
 function noop() {}
 
-function merge(a, b) {
+function smerge(a, b) {
   for (var k in b) {
     a[k] = b[k];
   }
