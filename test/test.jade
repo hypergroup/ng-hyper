@@ -1,4 +1,4 @@
-div(data-hyper=".reports.0 as report", data-hyper-redirect="/redirected/:report")
+div(data-hyper-redirect="/redirected/:.reports.0")
 div(data-hyper=".reports, .hf")
   div(data-ng-repeat="report in reports")
     h1(data-hyper-bind="report.title")

@@ -4,6 +4,7 @@
 
 var package = require('../package');
 var utils = require('../lib/utils');
+var $watchPath = utils.$watchPath;
 var slug = require('slug');
 var map = require('map');
 
@@ -58,20 +59,26 @@ function $watch(href, cb) {
   var keys = parse(href);
   if (!keys) return cb(href);
 
-  var exp = '[' + keys.toString() + ']';
+  var values = {};
+  map(keys, function(key) {
+    $watchPath.call($scope, key, function(err, value) {
+      if (err) return console.error(err.stack || err);
+      values[key] = value;
+      update(values);
+    });
+  });
 
-  $scope.$watch(exp, function() {
-    var res = create(href, $scope);
-
+  function update(values) {
+    var res = create(href, values);
     if (res.loaded) cb(res.href);
-  }, true);
+  };
 };
 
 exports.create = create;
-function create(href, $scope) {
+function create(href, values) {
   var res = {loaded: true};
   res.href = href.replace(regexp, function(full, key) {
-    if ($scope[key] || $scope[key] === 0) return fmt($scope[key]);
+    if (values[key] || values[key] === 0) return fmt(values[key]);
     res.loaded = false;
     return '-';
   });
