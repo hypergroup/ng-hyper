@@ -29,21 +29,21 @@ package.directive('hyperForm', [
         // get a user-specified callback
         var cb = attrs.hyperHandle ? $scope.$eval(attrs.hyperHandle) : noop;
 
+        elem.bind('submit', function() {
+          // TODO if the method is idempotent and the form is pristine don't submit
+          if ($scope.submit) $scope.submit();
+        });
+
         $watchPath.call($scope, attrs.hyperForm, function(err, value, req) {
           // TODO come up with an error strategy
           if (err) return console.error(err.stack || err);
 
+          // It doesn't look like a form
           if (!value || !value.action) return;
 
           // mark the element as loaded
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
-
-          // TODO do we need to set these values? The only thing I can
-          //      think of is rendering the site on the server..
-          // Set the action and method for the form
-          // elem.attr('method', value.method || 'GET');
-          // elem.attr('action', value.action);
 
           // We're in the middle of editing our form
           if (form.$dirty) return;
@@ -63,11 +63,6 @@ package.directive('hyperForm', [
             ins[name] = input;
           });
           var inputs = $scope.inputs = merge($scope.inputs, ins);
-
-          elem.bind('submit', function() {
-            // TODO if the method is idempotent and the form is pristine don't submit
-            $scope.submit();
-          });
 
           function followLink() {
             var url = value.action + '?' + qs.stringify($scope.values);
