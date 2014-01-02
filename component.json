@@ -29,6 +29,7 @@
     "directives/hyper-img.js",
     "directives/hyper-input.js",
     "directives/hyper-link.js",
+    "directives/hyper-redirect.js",
     "directives/hyper.js",
     "lib/utils.js"
   ],

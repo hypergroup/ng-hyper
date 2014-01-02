@@ -25,32 +25,17 @@ package.directive('hyperLink', [
         elem.addClass('ng-hyper-loading');
 
         var href = attrs.hyperLink;
-        var keys = parse(href);
 
         // watch the location and add an active class
         $scope.$on('$locationChangeSuccess', updateActive);
 
-        // If it doesn't have any templated properties just render it
-        if (!keys) return loadLink();
-
-        var exp = '[' + keys.toString() + ']';
-
-        $scope.$watch(exp, function() {
-          var res = create(attrs.hyperLink, $scope);
-
-          // we're still waiting for properties to come in
-          if (!res.loaded) return;
-
-          href = res.href;
-          loadLink();
-        }, true);
-
-        function loadLink() {
-          elem.attr('href', href);
+	$watch.call($scope, href, function(formatted) {
+	  href = formatted;
+          elem.attr('href', formatted);
           elem.removeClass('ng-hyper-loading');
           elem.addClass('ng-hyper-loaded');
           updateActive();
-        }
+   	});
 
         var isActive = false;
         function updateActive() {
@@ -67,6 +52,21 @@ package.directive('hyperLink', [
   }
 ]);
 
+exports.$watch = $watch;
+function $watch(href, cb) {
+  var $scope = this;
+  var keys = parse(href);
+  if (!keys) return cb(href);
+
+  var exp = '[' + keys.toString() + ']';
+
+  $scope.$watch(exp, function() {
+    var res = create(href, $scope);
+
+    if (res.loaded) cb(res.href);
+  }, true);
+};
+
 exports.create = create;
 function create(href, $scope) {
   var res = {loaded: true};
@@ -79,7 +79,7 @@ function create(href, $scope) {
 };
 
 /**
- * Parse the link 
+ * Parse the link
  */
 
 exports.parse = parse;
