@@ -28,7 +28,13 @@ package.directive('hyperImg', [
           var src = isUndef ? '' : (value.src || value.href || value);
           var title = isUndef ? '' : (value.title || value.alt || '');
 
-          // TODO add srcset
+          if (Array.isArray(src)) {
+            var set = src;
+            src = set[0].src;
+            attrs.$set('srcset', set.map(function(img) {
+              return img.src + ' ' + (img.size || '');
+            }).join(', '));
+          }
           attrs.$set('src', src);
           attrs.$set('alt', title);
           if (isUndef) return;
