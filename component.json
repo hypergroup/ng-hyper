@@ -17,7 +17,9 @@
     "component/querystring": "*",
     "CamShaft/websafe-base64": "*"
   },
-  "development": {},
+  "development": {
+    "CamShaft/hyper-emitter-ws": "*"
+  },
   "license": "MIT",
   "main": "index.js",
   "scripts": [
@@ -38,5 +40,6 @@
   ],
   "templates": [
     "templates/input.html"
-  ]
+  ],
+  "remotes": []
 }

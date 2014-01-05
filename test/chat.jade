@@ -1,0 +1,69 @@
+div(data-hyper=".messages")#messages
+  div(data-ng-repeat="message in messages").message
+    .content
+      span(data-hyper-bind="message.author.name").author
+      | :
+      hr()
+      span(data-hyper-bind="message.text").text
+
+form(data-hyper-form=".messages.create")#create
+  input(data-hyper-input="inputs.0").message
+  input(type="submit").submit
+
+script.
+  var emitter = require('hyper-emitter');
+  var ws = require('hyper-emitter-ws');
+  emitter.use(ws({
+    host: 'hyper-emitter.herokuapp.com',
+    port: 80
+  }));
+  require('ng-hyper');
+
+style.
+  body {
+    font-family: Helvetica, Arial, san-serif;
+  }
+
+  #create {
+    background: #fff;
+    position: fixed;
+    height: 100px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  #create .message,
+  #create .message input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 60px;
+  }
+
+  #create .submit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100px;
+  }
+
+  #messages {
+    position: relative;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding-bottom: 110px;
+  }
+
+  .message {
+    position: relative;
+    width: 100%;
+    background: #eee;
+    margin: 10px 0;
+  }
+
+  .message .content {
+    padding: 20px;
+  }

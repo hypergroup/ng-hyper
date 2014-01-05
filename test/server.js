@@ -1,5 +1,11 @@
 
+var superagent = require('superagent');
+
 module.exports = function(app) {
+  app.get('/chat', function(req, res) {
+    res.render('chat');
+  });
+
   app.get('/api', function(req, res) {
     res.send({
       simple: {
@@ -13,7 +19,22 @@ module.exports = function(app) {
         href: '/api/items'
       },
       user: {
-        href: '/api/user'
+        href: '/api/users/123'
+      },
+      'error-form': {
+        method: 'POST',
+        action: '/api'
+      },
+      messages: {
+        href: '/api/messages'
+      }
+    });
+  });
+
+  app.post('/api', function(req, res) {
+    res.send(500, {
+      error: {
+        message: 'Uh oh!'
       }
     });
   });
@@ -60,9 +81,9 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/api/user', function(req, res) {
+  app.get('/api/users/:user', function(req, res) {
     res.send({
-      href: '/api/user',
+      href: '/api/users/' + req.params.user,
       name: 'richard',
       picture: {
         type: 'image/jpg',
@@ -80,4 +101,55 @@ module.exports = function(app) {
       }
     });
   });
+
+  var messages = {};
+  app.get('/api/messages', function(req, res) {
+    res.send({
+      data: Object.keys(messages).map(function(message) {
+        return {
+          href: '/api/messages/' + message
+        };
+      }),
+      create: {
+        method: 'POST',
+        action: '/api/messages',
+        input: {
+          text: {
+            type: 'text'
+          }
+        }
+      }
+    });
+  });
+
+  app.post('/api/messages', function(req, res) {
+    req.body.author = randomID();
+    var id = randomID();
+    messages[id] = req.body;
+    res.redirect('/api/messages/' + id);
+    superagent
+      .post('http://hyper-emitter.herokuapp.com')
+      .send({url: '/api/messages'})
+      .end(function(){});
+  });
+
+  app.param('message', function(req, res, next, id) {
+    var message = messages[id];
+    if (!message) return res.send(404);
+    req.message = message;
+    next();
+  });
+
+  app.get('/api/messages/:message', function(req, res) {
+    res.send({
+      text: req.message.text,
+      author: {
+        href: '/api/users/' + req.message.author
+      }
+    });
+  });
 };
+
+function randomID() {
+  return Math.floor(Math.random() * 99999999999);
+}

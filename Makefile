@@ -5,6 +5,9 @@ all: build
 build: $(JS_FILES)
 	@component build --standalone ng-hyper
 
+build-dev: $(JS_FILES) components
+	@component build --dev
+
 components: component.json
 	@component install
 

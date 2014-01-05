@@ -1,3 +1,6 @@
+script.
+  require('ng-hyper');
+
 style.
   body {
     font-family: Helvetica, Arial, san-serif;
@@ -132,3 +135,13 @@ div(id="hyper-form-get-nosubmit")
 div(id="hyper-form-post")
   form(data-hyper-form=".items.create")
     input(data-ng-repeat="input in inputs", data-hyper-input="input")
+
+div(id="hyper-form-handle")
+  form(data-hyper-form=".items.create", data-hyper-handle="handleResponse")
+    input(data-ng-repeat="input in inputs", data-hyper-input="input")
+
+div(id="hyper-form-error")
+  form(data-hyper-form=".error-form")
+    div(data-ng-show="hyperFormError", data-ng-bind="hyperFormError.message").error
+    input(data-ng-repeat="input in inputs", data-hyper-input="input")
+    input(type="submit")

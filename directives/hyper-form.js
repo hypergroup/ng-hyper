@@ -96,7 +96,7 @@ package.directive('hyperForm', [
             $setPristine(form);
             cb(err, res);
             $scope.values = {};
-            if (err) $scope.hyperFormError = err;
+            if (err) $scope.hyperFormError = err.error;
             // TODO what are other status that we want to expose?
           });
         }
