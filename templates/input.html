@@ -1,5 +1,1 @@
-<div data-ng-class="{'ng-hyper-loading': !input, 'ng-hyper-loaded': input}" data-ng-switch="input.type">
-  <select data-ng-switch-when="select" data-ng-model="input.$model" name="{{input.name}}" data-ng-required="input.required" data-hyper="input.options" data-ng-options="option.value as (option.name || option.text) for option in options"></select>
-  <textarea data-ng-switch-when="textarea" data-ng-model="input.$model" name="{{input.name}}" placeholder="{{input.prompt || input.placeholder || input.title || input.name}}" data-ng-required="input.required"></textarea>
-  <input data-ng-switch-default data-ng-model="input.$model" name="{{input.name}}" type="{{input.type}}" placeholder="{{input.prompt || input.placeholder || input.title || input.name}}" data-ng-required="input.required" />
-</div>
+<input data-ng-model="input.$model" name="{{input.name}}" type="{{input.type}}" placeholder="{{input.prompt || input.placeholder || input.title || input.name}}" data-ng-required="input.required" />

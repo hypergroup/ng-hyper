@@ -71,6 +71,20 @@ module.exports = function(app) {
             type: 'text'
           }
         }
+      },
+      select: {
+        method: 'POST',
+        action: '/api/items',
+        input: {
+          choices: {
+            type: 'select',
+            options: [
+              {value: '1', text: 'first'},
+              {value: '2', text: 'second'},
+              {value: '3', text: 'third'}
+            ]
+          }
+        }
       }
     });
   });

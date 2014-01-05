@@ -125,7 +125,7 @@ div(id="hyper-redirect-broken").fail
 
 div(id="hyper-form-get-submit")
   form(data-hyper-form=".items.search", data-hyper-action="/results/:query")
-    input(data-ng-repeat="input in inputs", data-hyper-input="input")
+    input(data-ng-repeat="input in inputs", data-hyper-input="input", data-custom-attr="value123")
     input(type="submit")
 
 div(id="hyper-form-get-nosubmit")
@@ -145,3 +145,7 @@ div(id="hyper-form-error")
     div(data-ng-show="hyperFormError", data-ng-bind="hyperFormError.message").error
     input(data-ng-repeat="input in inputs", data-hyper-input="input")
     input(type="submit")
+
+div(id="hyper-form-input-select")
+  form(data-hyper-form=".items.select")
+    input(data-ng-repeat="input in inputs", data-hyper-input="input", data-custom-attr="value123")

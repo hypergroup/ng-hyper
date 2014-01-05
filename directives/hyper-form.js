@@ -45,7 +45,8 @@ package.directive('hyperForm', [
         function setup(config) {
           if (!canUpdate()) return;
 
-          unwatch();
+          // TODO fix the unwatch the second time it loads
+          // unwatch($scope.inputs);
           $scope.values = {};
           $scope.inputs = getInputs(config.input, $scope);
 
@@ -57,7 +58,7 @@ package.directive('hyperForm', [
         }
 
         function teardown() {
-          unwatch();
+          unwatch($scope.inputs);
           delete $scope.values;
           delete $scope.inputs;
 
@@ -69,7 +70,7 @@ package.directive('hyperForm', [
         }
 
         function getInputs(inputs, $scope) {
-          var ins = {};
+          var ins = [];
           var old = $scope.inputs;
           var i = 0;
 
@@ -100,7 +101,6 @@ package.directive('hyperForm', [
 
           if (i === 0) return [];
 
-          ins.length = i;
           return merge(old, ins);
         }
 
@@ -188,7 +188,7 @@ function getHandleFunction($scope, attrs) {
 
 function unwatch(inputs) {
   if (!inputs) return;
-    each(inputs, function(input) {
+  each(inputs, function(input) {
     input.$unwatch();
   });
 }
