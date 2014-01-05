@@ -68,13 +68,6 @@ package.directive('hyperForm', [
           return loading(elem);
         }
 
-        function unwatch(inputs) {
-          if (!inputs) return;
-          each(inputs, function(input) {
-            input.$unwatch();
-          });
-        }
-
         function getInputs(inputs, $scope) {
           var ins = {};
           var old = $scope.inputs;
@@ -136,7 +129,7 @@ package.directive('hyperForm', [
             // TODO verify the form is valid
             $scope.hyperFormLoading = true;
             attrs.hyperAction && method === 'GET'
-              ? followLink(action, $scope.values, onfinish)
+              ? followLink(action, $scope.values, attrs.hyperAction)
               : emitter.submit(method, action, $scope.values, onfinish);
           };
         }
@@ -157,23 +150,17 @@ package.directive('hyperForm', [
           });
         }
 
-        function followLink(action) {
+        function followLink(action, values, hyperAction) {
           // TODO check if action has a '?'
-          var url = action + '?' + qs.stringify($scope.values);
+          var url = action + '?' + qs.stringify(values);
           var $tmp = $scope.$new();
           $tmp.query = {query: {href: url}};
-          var res = createLink(attrs.hyperAction, $tmp);
+          var res = createLink(hyperAction, $tmp);
           $tmp.$destroy();
           if (!res.loaded) return;
           $safeApply.call($scope, function() {
             $location.path(res.href);
           });
-        }
-
-        function getHandleFunction() {
-          return attrs.hyperHandle
-            ? $scope.$eval(attrs.hyperHandle)
-            : noop;
         }
       }
     };
@@ -190,6 +177,19 @@ function $setPristine(form, elem) {
     if (!input || key.charAt(0) === '$') return;
     if (input.$pristine) input.$pristine = true;
     if (input.$dirty) input.$dirty = false;
+  });
+}
+
+function getHandleFunction($scope, attrs) {
+  return attrs.hyperHandle
+    ? $scope.$eval(attrs.hyperHandle)
+    : noop;
+}
+
+function unwatch(inputs) {
+  if (!inputs) return;
+    each(inputs, function(input) {
+    input.$unwatch();
   });
 }
 
