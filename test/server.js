@@ -41,6 +41,15 @@ module.exports = function(app) {
             type: 'text'
           }
         }
+      },
+      create: {
+        method: 'POST',
+        action: '/api/items',
+        input: {
+          title: {
+            type: 'text'
+          }
+        }
       }
     });
   });

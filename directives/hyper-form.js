@@ -82,8 +82,6 @@ package.directive('hyperForm', [
           $scope.submit = function() {
             $scope.hyperFormLoading = true;
             each(inputs, function(input) {
-              if (typeof input.model === 'undefined') return;
-              if ($scope.values[input.name]) return;
               $scope.values[input.name] = input.model;
             });
             attrs.hyperAction && value.method === 'GET'

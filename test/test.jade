@@ -48,7 +48,7 @@ div(id="hyper-as")
 //- hyper collection
 div(id="hyper-collection")
   div(data-hyper=".items")
-    span(data-ng-repeat="item in items", data-hyper-bind="item.title")
+    div(data-ng-repeat="item in items", data-hyper-bind="item.title")
 
 //- hyper collection property
 div(id="hyper-collection-property")
@@ -122,13 +122,13 @@ div(id="hyper-redirect-broken").fail
 
 div(id="hyper-form-get-submit")
   form(data-hyper-form=".items.search", data-hyper-action="/results/:query")
-    input(type="{{inputs.query.type}}", name="query", data-ng-model="inputs.query.model")
+    input(data-ng-repeat="input in inputs", data-hyper-input="input")
     input(type="submit")
 
 div(id="hyper-form-get-nosubmit")
   form(data-hyper-form=".items.search", data-hyper-action="/results/:query")
-    input(type="{{inputs.query.type}}", name="query", data-ng-model="inputs.query.model")
+    input(data-ng-repeat="input in inputs", data-hyper-input="input")
 
 div(id="hyper-form-post")
   form(data-hyper-form=".items.create")
-    input(type="{{inputs.title.type}}", name="title", data-ng-model="inputs.title.model")
+    input(data-ng-repeat="input in inputs", data-hyper-input="input")
