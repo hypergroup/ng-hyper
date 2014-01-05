@@ -3,8 +3,12 @@
  */
 
 var package = require('../package');
+var type = require('type');
+var map = require('map');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
+var loading = utils.loading;
+var loaded = utils.loaded;
 
 /**
  * hyperImg
@@ -16,31 +20,34 @@ package.directive('hyperImg', [
       scope: true,
       restrict: 'A',
       link: function($scope, elem, attrs) {
-        // disable hiding the element until loaded
-        elem.addClass('ng-hyper-loading');
+        loading(elem);
 
         $watchPath.call($scope, attrs.hyperImg, function(err, value) {
           // TODO come up with an error strategy
           if (err) return console.error(err.stack || err);
 
-          var isUndef = typeof value === 'undefined';
+          var isLoaded = utils.isLoaded(value);
 
-          var src = isUndef ? '' : (value.src || value.href || value);
-          var title = isUndef ? '' : (value.title || value.alt || '');
+          var src = isLoaded
+            ? (value.src || value.href || value)
+            : '';
+          var title = isLoaded
+            ? (value.title || value.alt || '')
+            : '';
 
-          if (Array.isArray(src)) {
-            var set = src;
-            src = set[0].src;
-            attrs.$set('srcset', set.map(function(img) {
+          if (type(src) === 'array') {
+            var srcset = map(src, function(img) {
               return img.src + ' ' + (img.size || '');
-            }).join(', '));
+            }).join(', ');
+            attrs.$set('srcset', srcset);
+            src = src[0].src;
           }
+
           attrs.$set('src', src);
           attrs.$set('alt', title);
-          if (isUndef) return;
 
-          elem.removeClass('ng-hyper-loading');
-          elem.addClass('ng-hyper-loaded');
+          if (isLoaded) return loaded(elem);
+          return loading(elem);
         });
       }
     };

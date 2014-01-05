@@ -5,8 +5,11 @@
 var package = require('../package');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
+var loading = utils.loading;
+var loaded = utils.loaded;
 var slug = require('slug');
 var map = require('map');
+var each = require('each');
 
 /**
  * Initialize our regular expression for url construction/deconstruction
@@ -23,7 +26,7 @@ package.directive('hyperLink', [
   function($location) {
     return {
       link: function($scope, elem, attrs) {
-        elem.addClass('ng-hyper-loading');
+        loading(elem);
 
         var href = attrs.hyperLink;
 
@@ -33,20 +36,24 @@ package.directive('hyperLink', [
         $watch.call($scope, href, function(formatted) {
           href = formatted;
           elem.attr('href', formatted);
-          elem.removeClass('ng-hyper-loading');
-          elem.addClass('ng-hyper-loaded');
+          loaded(elem);
           updateActive();
         });
 
         var isActive = false;
         function updateActive() {
-          if (href === ($location.url() || '/')) {
-            elem.addClass('active');
-            isActive = true;
-          } else if (isActive) {
-            elem.removeClass('active');
-            isActive = false;
-          }
+          if (href === ($location.url() || '/')) return setActive();
+          if (isActive) return setInactive();
+        }
+
+        function setActive() {
+          elem.addClass('active');
+          isActive = true;
+        }
+
+        function setInactive() {
+          elem.removeClass('active');
+          isActive = false;
         }
       }
     };
@@ -60,7 +67,7 @@ function $watch(href, cb) {
   if (!keys) return cb(href);
 
   var values = {};
-  map(keys, function(key) {
+  each(keys, function(key) {
     $watchPath.call($scope, key, function(err, value) {
       if (err) return console.error(err.stack || err);
       values[key] = value;
@@ -71,8 +78,8 @@ function $watch(href, cb) {
   function update(values) {
     var res = create(href, values);
     if (res.loaded) cb(res.href);
-  };
-};
+  }
+}
 
 exports.create = create;
 function create(href, values) {
@@ -83,7 +90,7 @@ function create(href, values) {
     return '-';
   });
   return res;
-};
+}
 
 /**
  * Parse the link

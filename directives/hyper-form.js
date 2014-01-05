@@ -8,6 +8,9 @@ var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
 var $safeApply = utils.$safeApply;
 var merge = utils.merge;
+var shallowMerge = utils.shallowMerge;
+var loading = utils.loading;
+var loaded = utils.loaded;
 var each = require('each');
 var createLink = require('./hyper-link').create;
 var qs = require('querystring');
@@ -23,103 +26,171 @@ package.directive('hyperForm', [
       scope: true,
       require: 'form',
       link: function($scope, elem, attrs, form) {
-        // disable hiding the element until loaded
-        elem.addClass('ng-hyper-loading');
+        loading(elem);
 
-        // get a user-specified callback
-        var cb = attrs.hyperHandle ? $scope.$eval(attrs.hyperHandle) : noop;
+        var handle = getHandleFunction($scope, attrs);
 
         elem.bind('submit', function() {
-          // TODO if the method is idempotent and the form is pristine don't submit
           if ($scope.submit) $scope.submit();
         });
 
-        $watchPath.call($scope, attrs.hyperForm, function(err, value, req) {
+        $watchPath.call($scope, attrs.hyperForm, function(err, value) {
           // TODO come up with an error strategy
           if (err) return console.error(err.stack || err);
 
-          // It doesn't look like a form
-          if (!value || !value.action) return;
+          if (value && value.action) return setup(value);
+          return teardown(value);
+        });
 
-          // mark the element as loaded
-          elem.removeClass('ng-hyper-loading');
-          elem.addClass('ng-hyper-loaded');
+        function setup(config) {
+          if (!canUpdate()) return;
 
-          // We're in the middle of editing our form
-          if (form.$dirty) return;
-
-          // Expose the list of shown inputs to the view
+          unwatch();
           $scope.values = {};
+          $scope.inputs = getInputs(config.input, $scope);
 
-          var ins = [];
-          each(value.input, function(name, conf) {
-            if (conf.type === 'hidden') return $scope.values[name] = typeof conf.value === 'undefined' ? conf : conf.value;
+          $scope.set = initSet($scope.inputs);
+          $scope.submit = initSubmit(config.method, config.action);
+          $scope.reset = initReset();
+
+          return loaded(elem);
+        }
+
+        function teardown() {
+          unwatch();
+          delete $scope.values;
+          delete $scope.inputs;
+
+          delete $scope.set;
+          delete $scope.submit;
+          delete $scope.reset;
+
+          return loading(elem);
+        }
+
+        function unwatch(inputs) {
+          if (!inputs) return;
+          each(inputs, function(input) {
+            input.$unwatch();
+          });
+        }
+
+        function getInputs(inputs, $scope) {
+          var ins = {};
+          var old = $scope.inputs;
+          var i = 0;
+
+          var setValue = initSetValue(inputs);
+
+          each(inputs, function(name, conf) {
+            var value = conf.value;
+
+            if (conf.type === 'hidden') return setValue(name, value);
+
             // We have to clone this object so hyper-path doesn't watch for changes on the model
-            var input = smerge({
-              model: conf.value,
+            var input = shallowMerge({
+              $model: value,
+              $orig: value, // TODO do we need to clone this so it doesn't change on us?
               name: name
             }, conf);
-            ins.push(input);
+
+            // Allow addressing the input from either the index or the name
+            ins[i++] = input;
             ins[name] = input;
+
+            input.$unwatch = $scope.$watch(function () {
+              return input.$model;
+            }, function() {
+              setValue(name, input.$model);
+            });
           });
-          var inputs = $scope.inputs = merge($scope.inputs, ins);
 
-          function followLink() {
-            var url = value.action + '?' + qs.stringify($scope.values);
-            // TODO create a child scope
-            var res = createLink(attrs.hyperAction, {query: {href: url}});
-            if (!res.loaded) return;
-            $safeApply.call($scope, function() {
-              $location.path(res.href);
-            });
-          }
+          if (i === 0) return [];
 
-          $scope.set = function(name, value) {
+          ins.length = i;
+          return merge(old, ins);
+        }
+
+        function initSetValue (inputs) {
+          return function setValue(name, value) {
             $scope.values[name] = value;
-            if ($scope.inputs[name]) $scope.inputs[name].model = value;
+            if (inputs[name].$orig !== value) form.$setDirty();
           };
+        }
 
-          $scope.submit = function() {
-            $scope.hyperFormLoading = true;
-            each(inputs, function(input) {
-              $scope.values[input.name] = input.model;
-            });
-            attrs.hyperAction && value.method === 'GET'
-              ? followLink()
-              : emitter.submit(value.method, value.action, $scope.values, onfinish);
+        function canUpdate() {
+          // TODO allow dirty updating config via attr
+          return !form.$dirty;
+        }
+
+        function initSet(inputs) {
+          return function set(name, value) {
+            if (inputs[name]) inputs[name].$model = value;
           };
-        });
+        }
+
+        function initSubmit(method, action) {
+          method = (method || 'GET').toUpperCase();
+          return function submit() {
+            // TODO if the method is idempotent and the form is pristine don't submit
+            // TODO verify the form is valid
+            $scope.hyperFormLoading = true;
+            attrs.hyperAction && method === 'GET'
+              ? followLink(action, $scope.values, onfinish)
+              : emitter.submit(method, action, $scope.values, onfinish);
+          };
+        }
+
+        function initReset() {
+          return function reset() {
+            // TODO
+          };
+        }
 
         function onfinish(err, res) {
           $safeApply.call($scope, function() {
             delete $scope.hyperFormLoading;
-            $setPristine(form);
-            cb(err, res);
-            $scope.values = {};
+            handle(err, res);
             if (err) $scope.hyperFormError = err.error;
             // TODO what are other status that we want to expose?
+            $setPristine(form, elem);
           });
+        }
+
+        function followLink(action) {
+          // TODO check if action has a '?'
+          var url = action + '?' + qs.stringify($scope.values);
+          var $tmp = $scope.$new();
+          $tmp.query = {query: {href: url}};
+          var res = createLink(attrs.hyperAction, $tmp);
+          $tmp.$destroy();
+          if (!res.loaded) return;
+          $safeApply.call($scope, function() {
+            $location.path(res.href);
+          });
+        }
+
+        function getHandleFunction() {
+          return attrs.hyperHandle
+            ? $scope.$eval(attrs.hyperHandle)
+            : noop;
         }
       }
     };
   }
 ]);
 
-function $setPristine(form) {
+function $setPristine(form, elem) {
   if (form.$setPristine) return form.$setPristine();
   form.$pristine = true;
   form.$dirty = false;
-  each(form, function(input, key) {
+  elem.addClass('ng-pristine');
+  elem.removeClass('ng-dirty');
+  each(form, function(key, input) {
+    if (!input || key.charAt(0) === '$') return;
     if (input.$pristine) input.$pristine = true;
     if (input.$dirty) input.$dirty = false;
   });
 }
 
 function noop() {}
-
-function smerge(a, b) {
-  for (var k in b) {
-    a[k] = b[k];
-  }
-  return a;
-}

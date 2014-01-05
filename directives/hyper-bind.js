@@ -5,6 +5,10 @@
 var package = require('../package');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
+var format = utils.formatValue;
+var loading = utils.loading;
+var loaded = utils.loaded;
+var isLoaded = utils.isLoaded;
 
 /**
  * hyperBind
@@ -16,20 +20,20 @@ package.directive('hyperBind', [
       scope: true,
       restrict: 'A',
       link: function($scope, elem, attrs) {
-        // disable hiding the element until loaded
-        elem.addClass('ng-hyper-loading');
+        loading(elem);
 
         $watchPath.call($scope, attrs.hyperBind, function(err, value, req) {
           // TODO come up with an error strategy
           if (err) return console.error(err.stack || err);
 
-          // display numbers correctly
+          // expose value to the scope
           $scope[req.target] = value;
-          elem.text(value === 0 ? value : (value || ''));
-          if (value !== 0 && !value) return;
 
-          elem.removeClass('ng-hyper-loading');
-          elem.addClass('ng-hyper-loaded');
+          // set the element contents
+          elem.text(format(value));
+
+          if (isLoaded(value)) return loaded(elem);
+          return loading(elem);
         });
       }
     };

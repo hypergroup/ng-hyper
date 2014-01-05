@@ -15,7 +15,7 @@ package.directive('hyperRedirect', [
   function($location) {
     return {
       link: function($scope, elem, attrs) {
-        elem.addClass ('ng-hyper-loading');
+        utils.loading(elem);
 
         hl.$watch.call($scope, attrs.hyperRedirect, function(href) {
           $location.path(href);

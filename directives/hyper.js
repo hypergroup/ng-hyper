@@ -8,6 +8,9 @@ var each = require('each');
 var utils = require('../lib/utils');
 var $watchPath = utils.$watchPath;
 var merge = utils.merge;
+var loading = utils.loading;
+var loaded = utils.loaded;
+var isLoaded = utils.isLoaded;
 
 /**
  * hyper scope directive
@@ -27,8 +30,7 @@ package.directive('hyper', [
       scope: true,
       restrict: 'A',
       link: function($scope, elem, attrs) {
-        // disable hiding the element until loaded
-        elem.addClass('ng-hyper-loading');
+        loading(elem);
 
         var exprs = attrs.hyper.split(',');
 
@@ -42,12 +44,11 @@ package.directive('hyper', [
             // TODO come up with an error strategy
             if (err) return console.error(err.stack || err);
 
-            var t = target || req.target
+            var t = target || req.target;
             $scope[t] = merge($scope[t], value);
-            if (value !== 0 && !value) return;
 
-            elem.removeClass('ng-hyper-loading');
-            elem.addClass('ng-hyper-loaded');
+            if (isLoaded(value)) return loaded(elem);
+            return loading(elem);
           });
         });
       }
