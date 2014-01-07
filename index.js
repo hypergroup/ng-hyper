@@ -21,6 +21,7 @@ exports.hyperImg = require('./directives/hyper-img');
 exports.hyperInput = require('./directives/hyper-input');
 exports.hyperLink = require('./directives/hyper-link');
 exports.hyperRedirect = require('./directives/hyper-redirect');
+exports.hyperTranslate = require('./directives/hyper-translate');
 
 /**
  * Tell other modules how to load us

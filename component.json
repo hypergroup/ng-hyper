@@ -15,7 +15,8 @@
     "component/type": "*",
     "CamShaft/component-angular": "*",
     "component/querystring": "*",
-    "CamShaft/websafe-base64": "*"
+    "CamShaft/websafe-base64": "*",
+    "airbnb/Polyglot.js": "*"
   },
   "development": {
     "CamShaft/hyper-emitter-ws": "*"
@@ -32,6 +33,7 @@
     "directives/hyper-input.js",
     "directives/hyper-link.js",
     "directives/hyper-redirect.js",
+    "directives/hyper-translate.js",
     "directives/hyper.js",
     "lib/utils.js"
   ],
