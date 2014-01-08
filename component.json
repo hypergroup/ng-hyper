@@ -41,9 +41,7 @@
     "style.css"
   ],
   "templates": [
-    "templates/input.html",
-    "templates/select.html",
-    "templates/textarea.html"
+    "templates/inputs.html"
   ],
   "remotes": []
 }

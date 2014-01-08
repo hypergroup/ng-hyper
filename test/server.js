@@ -69,6 +69,16 @@ module.exports = function(app) {
         input: {
           title: {
             type: 'text'
+          },
+          description: {
+            type: 'textarea'
+          },
+          tag: {
+            type: 'select',
+            options: [
+              {value: 'thing-1', text: 'Thing1'},
+              {value: 'thing-2', text: 'Thing2'}
+            ]
           }
         }
       },
