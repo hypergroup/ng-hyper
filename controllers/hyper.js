@@ -2,9 +2,8 @@
  * Module dependencies
  */
 
-var package = require('../package');
-var each = require('each');
-var request = require('hyper-emitter');
+var pkg = require('../package');
+var each = angular.forEach;
 var utils = require('../lib/utils');
 var $safeApply = utils.$safeApply;
 var merge = utils.merge;
@@ -14,11 +13,12 @@ var isCrossDomain = require('url').isCrossDomain;
  * HyperController
  */
 
-package.controller('HyperController', [
+pkg.controller('HyperController', [
   '$scope',
   '$routeParams',
-
-  function HyperController($scope, $routeParams) {
+  'hyperBackend',
+  'hyperLinkFormatter',
+  function HyperController($scope, $routeParams, hyper, hyperLinkFormatter) {
     // keep track of current the subscriptions
     var subscriptions = {};
 
@@ -27,7 +27,7 @@ package.controller('HyperController', [
     }, function(newVal, oldVal) {
 
       // clean up the old parameters/values
-      each(oldVal, function(key, value) {
+      each(oldVal, function(value, key) {
         // the param hasn't changed since last time
         if ($routeParams[key] == value) return;
 
@@ -38,13 +38,12 @@ package.controller('HyperController', [
       });
 
       // add the new params
-      each($routeParams, function(key, value) {
+      each($routeParams, function(value, key) {
         // ignore slugs
         if (key === 'slug') return;
 
         // try decoding the parameter
-        var href;
-        try { href = utils.decode(value); } catch(e) {}
+        var href = hyperLinkFormatter.decode(value);
 
         // it didn't look like a valid url
         if (!href) return;
@@ -53,12 +52,13 @@ package.controller('HyperController', [
         if (href.indexOf('http') !== 0 && href.indexOf('/') !== 0) return;
 
         // don't allow CORS attacks
+        // TODO give an error message
         if (isCrossDomain(href)) return;
 
         // subscribe to the href
-        subscriptions[key] = request
+        subscriptions[key] = hyper
           .get(href, function(err, body) {
-            // TODO come up with an error strategy
+            // TODO handle error with angular
             if (err) return console.error(err.stack || err);
 
             $safeApply.call($scope, function() {
@@ -69,7 +69,7 @@ package.controller('HyperController', [
     }, true);
 
     $scope.$on('$destroy', function() {
-      each(subscriptions, function(key, off) {
+      each(subscriptions, function(off) {
         off();
       });
     });

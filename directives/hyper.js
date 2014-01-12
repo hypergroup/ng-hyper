@@ -2,15 +2,8 @@
  * Module dependencies
  */
 
-var package = require('../package');
-var request = require('hyper-path');
-var each = require('each');
-var utils = require('../lib/utils');
-var $watchPath = utils.$watchPath;
-var merge = utils.merge;
-var loading = utils.loading;
-var loaded = utils.loaded;
-var isLoaded = utils.isLoaded;
+var pkg = require('../package');
+var merge = require('../lib/utils').merge;
 
 /**
  * hyper scope directive
@@ -24,31 +17,30 @@ var isLoaded = utils.isLoaded;
  * value of `.account.name` will be assigned to `$scope.firstName`.
  */
 
-package.directive('hyper', [
-  function() {
+pkg.directive('hyper', [
+  'hyper',
+  'hyperStatus',
+  function(hyper, status) {
     return {
       scope: true,
       restrict: 'A',
       link: function($scope, elem, attrs) {
-        loading(elem);
+        status.loading(elem);
 
         var exprs = attrs.hyper.split(',');
 
-        each(exprs, function(expr) {
+        angular.forEach(exprs, function(expr) {
           // split the command to allow binding to arbitrary names
           var parts = expr.trim().split(' as ');
           var path = parts[0];
           var target = parts[1];
 
-          $watchPath.call($scope, path, function(err, value, req) {
-            // TODO come up with an error strategy
-            if (err) return console.error(err.stack || err);
-
+          hyper.get(path, $scope, function(value, req) {
             var t = target || req.target;
             $scope[t] = merge($scope[t], value);
 
-            if (isLoaded(value)) return loaded(elem);
-            return loading(elem);
+            if (status.isLoaded(value)) return status.loaded(elem);
+            return status.loading(elem);
           });
         });
       }

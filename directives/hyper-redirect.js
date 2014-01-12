@@ -2,22 +2,22 @@
  * Module dependencies
  */
 
-var package = require('../package');
-var utils = require('../lib/utils');
-var hl = require('./hyper-link');
+var pkg = require('../package');
 
 /**
  * Register it with angular
  */
 
-package.directive('hyperRedirect', [
+pkg.directive('hyperRedirect', [
   '$location',
-  function($location) {
+  'hyperLink',
+  'hyperStatus',
+  function($location, hyperLink, status) {
     return {
       link: function($scope, elem, attrs) {
-        utils.loading(elem);
+        status.loading(elem);
 
-        hl.$watch.call($scope, attrs.hyperRedirect, function(href) {
+        hyperLink.watch(attrs.hyperRedirect, $scope, function(href) {
           $location.path(href);
         });
       }

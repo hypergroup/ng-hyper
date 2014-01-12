@@ -2,31 +2,29 @@
  * Module dependencies
  */
 
-var package = require('../package');
-var emitter = require('hyper-emitter');
+var pkg = require('../package');
 var utils = require('../lib/utils');
-var $watchPath = utils.$watchPath;
 var $safeApply = utils.$safeApply;
 var merge = utils.merge;
 var shallowMerge = utils.shallowMerge;
-var loading = utils.loading;
-var loaded = utils.loaded;
-var each = require('each');
-var createLink = require('./hyper-link').create;
+var each = angular.forEach;
 var qs = require('querystring');
 
 /**
  * hyperForm
  */
 
-package.directive('hyperForm', [
+pkg.directive('hyperForm', [
   '$location',
-  function($location) {
+  'hyper',
+  'hyperLink',
+  'hyperStatus',
+  function($location, hyper, hyperLink, status) {
     return {
       scope: true,
       require: 'form',
       link: function($scope, elem, attrs, form) {
-        loading(elem);
+        status.loading(elem);
 
         var handle = getHandleFunction($scope, attrs);
 
@@ -34,10 +32,7 @@ package.directive('hyperForm', [
           if ($scope.submit) $scope.submit();
         });
 
-        $watchPath.call($scope, attrs.hyperForm, function(err, value) {
-          // TODO come up with an error strategy
-          if (err) return console.error(err.stack || err);
-
+        hyper.get(attrs.hyperForm, $scope, function(value) {
           if (value && value.action) return setup(value);
           return teardown(value);
         });
@@ -54,7 +49,7 @@ package.directive('hyperForm', [
           $scope.submit = initSubmit(config.method, config.action);
           $scope.reset = initReset();
 
-          return loaded(elem);
+          return status.loaded(elem);
         }
 
         function teardown() {
@@ -66,7 +61,7 @@ package.directive('hyperForm', [
           delete $scope.submit;
           delete $scope.reset;
 
-          return loading(elem);
+          return status.loading(elem);
         }
 
         function getInputs(inputs, $scope) {
@@ -76,7 +71,7 @@ package.directive('hyperForm', [
 
           var setValue = initSetValue(inputs);
 
-          each(inputs, function(name, conf) {
+          each(inputs, function(conf, name) {
             var value = conf.value;
 
             if (conf.type === 'hidden') return setValue(name, value);
@@ -130,7 +125,7 @@ package.directive('hyperForm', [
             $scope.hyperFormLoading = true;
             attrs.hyperAction && method === 'GET'
               ? followLink(action, $scope.values, attrs.hyperAction)
-              : emitter.submit(method, action, $scope.values, onfinish);
+              : hyper.submit(method, action, $scope.values, onfinish);
           };
         }
 
@@ -154,8 +149,8 @@ package.directive('hyperForm', [
           // TODO check if action has a '?'
           var url = action + '?' + qs.stringify(values);
           var $tmp = $scope.$new();
-          $tmp.query = {query: {href: url}};
-          var res = createLink(hyperAction, $tmp);
+          $tmp.query = {href: url};
+          var res = hyperLink(hyperAction, $tmp);
           $tmp.$destroy();
           if (!res.loaded) return;
           $safeApply.call($scope, function() {
@@ -173,7 +168,7 @@ function $setPristine(form, elem) {
   form.$dirty = false;
   elem.addClass('ng-pristine');
   elem.removeClass('ng-dirty');
-  each(form, function(key, input) {
+  each(form, function(input, key) {
     if (!input || key.charAt(0) === '$') return;
     if (input.$pristine) input.$pristine = true;
     if (input.$dirty) input.$dirty = false;
@@ -183,7 +178,7 @@ function $setPristine(form, elem) {
 function getHandleFunction($scope, attrs) {
   return attrs.hyperHandle
     ? $scope.$eval(attrs.hyperHandle)
-    : noop;
+    : angular.noop;
 }
 
 function unwatch(inputs) {
@@ -192,5 +187,3 @@ function unwatch(inputs) {
     input.$unwatch();
   });
 }
-
-function noop() {}

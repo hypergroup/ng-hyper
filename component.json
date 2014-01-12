@@ -5,20 +5,18 @@
   "version": "0.0.1",
   "keywords": [],
   "dependencies": {
-    "CamShaft/hyper-emitter": "*",
     "CamShaft/hyper-path": "*",
-    "CamShaft/hyperagent": "*",
     "yields/slug": "*",
     "component/map": "*",
     "component/url": "*",
-    "component/each": "*",
     "component/type": "*",
-    "CamShaft/component-angular": "*",
     "component/querystring": "*",
     "CamShaft/websafe-base64": "*",
-    "airbnb/Polyglot.js": "*"
+    "airbnb/Polyglot.js": "*",
+    "component/emitter": "*"
   },
   "development": {
+    "CamShaft/component-angular": "*",
     "CamShaft/hyper-emitter-ws": "*"
   },
   "license": "MIT",
@@ -35,6 +33,12 @@
     "directives/hyper-redirect.js",
     "directives/hyper-translate.js",
     "directives/hyper.js",
+    "services/hyper.js",
+    "services/hyper-link.js",
+    "services/hyper-link-formatter.js",
+    "services/hyper-status.js",
+    "services/hyper-backend-http.js",
+    "services/hyper-translator.js",
     "lib/utils.js"
   ],
   "styles": [
