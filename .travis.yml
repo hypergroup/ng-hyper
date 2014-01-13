@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+  - 0.10
+
+env:
+  matrix:
+    - NG_VERSION=1.0.8
+    - NG_VERSION=1.2.8
+  global:
+    - MIN=1
+    - LOGS_DIR=/tmp/ng-hyper-build/logs
+    - BROWSER_PROVIDER_READ_FILE=/tmp/sauce-connet-ready
+
+before_script:
+  - mkdir -p $LOGS_DIR
+  - curl https://raw.github.com/angular/angular.js/8864e54f1f94883f3e22d7ce7ed87a699467a217/lib/sauce/sauce_connect_setup.sh | bash
+  - ./test/wait-for-browser.sh
+
+after_script:
+  - ./test/print-logs.sh

@@ -4,7 +4,6 @@
 
 var pkg = require('../package');
 var $safeApply = require('../lib/utils').$safeApply;
-var request = require('hyper-path');
 
 /**
  * hyper service
@@ -12,7 +11,8 @@ var request = require('hyper-path');
 
 pkg.factory('hyper', [
   'hyperBackend',
-  function(backend) {
+  'hyperPath',
+  function(backend, request) {
     function get(path, $scope, fn) {
       var req = request(path, backend);
 

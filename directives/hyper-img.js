@@ -33,12 +33,12 @@ pkg.directive('hyperImg', [
             var srcset = map(src, function(img) {
               return img.src + ' ' + (img.size || '');
             }).join(', ');
-            attrs.$set('srcset', srcset);
+            elem.prop('srcset', srcset);
             src = src[0].src;
           }
 
-          attrs.$set('src', src);
-          attrs.$set('alt', title);
+          elem.prop('src', src);
+          elem.prop('alt', title);
 
           if (isLoaded) return status.loaded(elem);
           return status.loading(elem);
