@@ -1,4 +1,4 @@
-var CI = !!process.env.TRAVIS_BUILD_NUMBER;
+var CI = !!process.env.TRAVIS;
 var SAUCE = !!process.env.SAUCE_USERNAME;
 var NG_VERSION = process.env.NG_VERSION;
 var MIN = process.env.MIN ? '.min' : '';

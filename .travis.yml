@@ -10,6 +10,8 @@ env:
     - MIN=1
     - LOGS_DIR=/tmp/ng-hyper-build/logs
     - BROWSER_PROVIDER_READ_FILE=/tmp/sauce-connet-ready
+    - secure: fTK7pdGsJYSkPCrI4DbFmUt+pcPx+hB1NZEVzQo0JUvKzoojN1SFv+yFssoZD52RAfizBGo90CKeLlL0qr5Sr5bsuGvT8Wbl8zKUhdxghNQT6NKT4GdceKpNR5jGK7KPRcM0n7cgB6Y3D/KpPnZ3ZXSely43K70iw2n9dgZShx0=
+    - secure: NtiNhD3e4o31V/69eDH//qcQrYiwih3mltWq3muVGrMj8Ab8vHrG0ccGS3T4jOAPqMjizbnxUwLYyWF3uQuqvTQD38i7dluoLeJG6QJwBHedwJhMlot1ALH0u1ZhLtb9MpNQ6aQqmsW4Q5N3J3GnQ14Kp5Euoe9TetLbtsdcyd4=
 
 before_script:
   - mkdir -p $LOGS_DIR
