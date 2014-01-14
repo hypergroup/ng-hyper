@@ -1,0 +1,47 @@
+---
+title: ng-hyper
+layout: default
+---
+
+<h2>ng-hyper</h2>
+
+<h3>Examples</h3>
+
+<link href="css/examples.css" rel="stylesheet">
+<script src="js/angular-1.2.8.min.js"></script>
+<script src="code/ng-hyper-0.1.0.js"></script>
+
+<div class="examples">
+{% for example in site.data.examples %}
+<h4>{{example.name}}</h4>
+<div class="example">
+
+<div class="markup" data-ng-non-bindable="">
+  <h5>Template</h5>
+{% highlight html %}
+{% include {{example.html}} %}
+{% endhighlight %}
+</div>
+
+<div class="api">
+  <h5>API</h5>
+{% highlight json %}
+{% include {{example.api}} %}
+{% endhighlight %}
+</div>
+
+<div class="app cf" id="{{example.name}}-app">
+  <h5>Result</h5>
+{% include {{example.html}} %}
+</div>
+<script>
+  angular.module('{{example.name}}', ['ng-hyper'])
+    .config(function($provide) {
+      $provide.value('hyperHttpRoot', 'api/{{example.name}}/index.json');
+    });
+  angular.bootstrap(document.getElementById('{{example.name}}-app'), ['{{example.name}}']);
+</script>
+
+</div>
+{% endfor %}
+</div>

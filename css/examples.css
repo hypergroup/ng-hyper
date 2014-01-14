@@ -1,0 +1,22 @@
+.examples {
+  position: relative;
+  width: 100%;
+}
+
+.examples .example .markup,
+.examples .example .api {
+  width: 50%;
+  float: left;
+  overflow: scroll;
+  max-height: 500px;
+}
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}

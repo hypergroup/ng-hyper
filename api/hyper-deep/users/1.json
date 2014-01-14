@@ -1,0 +1,6 @@
+{
+  "name": "Cameron",
+  "friends": {
+    "href": "api/hyper-deep/users/1/friends.json"
+  }
+}
