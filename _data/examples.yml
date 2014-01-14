@@ -1,0 +1,6 @@
+-
+  html: hyper-basic.html
+  api: hyper-basic.json
+-
+  html: hyper-deep.html
+  api: hyper-deep.json

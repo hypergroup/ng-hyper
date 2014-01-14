@@ -1,0 +1,8 @@
+<div data-hyper=".users">
+  <div data-hyper="user.name" data-ng-repeat="user in users">
+    <span data-ng-bind="name"></span> is friends with:
+    <ul data-hyper="user.friends">
+      <li data-ng-repeat="friend in friends" data-hyper="friend.name" data-ng-bind="name"></li>
+    </ul>
+  </div>
+</div>

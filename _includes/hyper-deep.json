@@ -1,0 +1,63 @@
+{
+  "href": "/api.json",
+  "users": {
+    "href": "/api/users.json"
+  }
+}
+---
+{
+  "href": "/api/users.json",
+  "data": [
+    {"href": "/api/users/1.json"},
+    {"href": "/api/users/2.json"},
+    {"href": "/api/users/3.json"}
+  ]
+}
+---
+{
+  "href": "/api/users/1.json",
+  "name": "Cameron",
+  "friends": {
+     "href": "/api/users/1/friends.json"
+   }
+}
+---
+{
+  "href": "/api/users/1/friends.json",
+  "data": [
+    {"href": "/api/users/2.json"},
+    {"href": "/api/users/3.json"}
+  ]
+}
+---
+{
+  "href": "/api/users/2.json",
+  "name": "Tim",
+  "friends": {
+     "href": "/api/users/2/friends.json"
+   }
+}
+---
+{
+  "href": "/api/users/2/friends.json",
+  "data": [
+    {"href": "/api/users/1.json"},
+    {"href": "/api/users/3.json"}
+  ]
+}
+---
+{
+  "href": "/api/users/3.json",
+  "name": "Mike",
+  "friends": {
+     "href": "/api/users/3/friends.json"
+   }
+}
+---
+{
+  "href": "/api/users/3/friends.json",
+  "data": [
+    {"href": "/api/users/1.json"},
+    {"href": "/api/users/2.json"}
+  ]
+}
