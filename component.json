@@ -1,18 +1,18 @@
 {
   "name": "ng-hyper",
-  "repo": "CamShaft/ng-hyper",
+  "repo": "hypergroup/ng-hyper",
   "description": "Hyper tools for angular",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "keywords": [],
   "dependencies": {
-    "CamShaft/hyper-path": "*",
-    "yields/slug": "*",
-    "component/map": "*",
-    "component/url": "*",
-    "component/type": "*",
-    "component/querystring": "*",
     "CamShaft/websafe-base64": "*",
-    "component/emitter": "*"
+    "component/emitter": "*",
+    "component/map": "*",
+    "component/querystring": "*",
+    "component/type": "*",
+    "component/url": "*",
+    "hypergroup/hyper-path": "*",
+    "yields/slug": "*"
   },
   "development": {},
   "license": "MIT",
