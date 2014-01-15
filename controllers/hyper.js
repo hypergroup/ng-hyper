@@ -53,7 +53,7 @@ pkg.controller('HyperController', [
 
         // don't allow CORS attacks
         // TODO give an error message
-        if (isCrossDomain(href)) return;
+        // if (isCrossDomain(href)) return;
 
         // subscribe to the href
         subscriptions[key] = hyper
