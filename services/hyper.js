@@ -33,6 +33,10 @@ pkg.factory('hyper', [
         });
       });
 
+      $scope.$on('$destroy', function() {
+        req.off();
+      });
+
       return req;
     }
 
