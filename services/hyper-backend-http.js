@@ -4,6 +4,7 @@
 
 var pkg = require('../package');
 var Emitter = require('emitter');
+var parseLinks = require('links-parser');
 
 // set the default api path to '/api'
 pkg.value('hyperHttpRoot', '/api');
@@ -22,7 +23,7 @@ pkg.factory('hyperHttpEmitter', [
 
     function emitter(href, get) {
       // Proxy the fn so it can be used more than once
-      function handle(err, body) { get(err, body); }
+      function handle(err, body, links) { get(err, body, links); }
 
       subs.on(href, handle);
       get();
@@ -45,7 +46,7 @@ pkg.factory('hyperHttpEmitter', [
       };
 
       $http.get(href, req)
-        .success(function(body) {
+        .success(function(body, status, headers) {
           subs.emit(href, body);
         })
         .error(function(err) {
@@ -88,8 +89,12 @@ pkg.factory('hyperBackend', [
 
         $http
           .get(href, {cache: true})
-          .success(function(body) {
-            fn(null, body);
+          .success(function(body, status, headers) {
+            var links = {};
+            try {
+              links = parseLinks(headers('link'));
+            } catch (e) {}
+            fn(null, body, links);
           })
           .error(function(err, status) {
             // Just return an empty body if it's not found
@@ -108,13 +113,17 @@ pkg.factory('hyperBackend', [
 
       $http(req)
         .success(function(body, status, headers) {
-          fn(null, body);
+          var links = {};
+          try {
+            links = parseLinks(headers('link'));
+          } catch (e) {}
+          fn(null, body, links);
 
           if (method === 'GET') return;
 
           emitter.refresh(action);
           angular.forEach(refreshHeaders, function(header) {
-            var href = headers[header];
+            var href = headers(header);
             if (href) emitter.refresh(href);
           });
         })

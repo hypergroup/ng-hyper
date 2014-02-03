@@ -12,7 +12,8 @@
     "component/type": "*",
     "component/url": "*",
     "hypergroup/hyper-path": "*",
-    "yields/slug": "*"
+    "yields/slug": "*",
+    "camshaft/links-parser": "*"
   },
   "development": {},
   "license": "MIT",
