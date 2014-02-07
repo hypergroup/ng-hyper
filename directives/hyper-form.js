@@ -38,7 +38,7 @@ pkg.directive('hyperForm', [
         });
 
         function setup(config) {
-          if (!canUpdate()) return;
+          //if (!canUpdate()) return;
 
           // TODO fix the unwatch the second time it loads
           // unwatch($scope.inputs);
