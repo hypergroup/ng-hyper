@@ -122,6 +122,10 @@ pkg.directive('hyperForm', [
           return function submit() {
             // TODO if the method is idempotent and the form is pristine don't submit
             // TODO verify the form is valid
+
+            // don't submit if form is in progress
+            if ($scope.hyperFormLoading) return;
+
             $scope.hyperFormLoading = true;
             elem.addClass('ng-hyper-form-loading');
             attrs.hyperAction && method === 'GET'
