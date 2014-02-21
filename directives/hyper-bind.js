@@ -31,10 +31,9 @@ pkg.directive('hyperBind', [
       }
     };
 
-    function format(value, def) {
-      if (status.isLoaded(value)) return value;
-      if (typeof def === 'undefined') return '';
-      return def;
+    function format(value) {
+      if (typeof value === 'undefined') return '';
+      return value;
     };
   }
 ]);

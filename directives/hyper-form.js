@@ -123,6 +123,7 @@ pkg.directive('hyperForm', [
             // TODO if the method is idempotent and the form is pristine don't submit
             // TODO verify the form is valid
             $scope.hyperFormLoading = true;
+            elem.addClass('ng-hyper-form-loading');
             attrs.hyperAction && method === 'GET'
               ? followLink(action, $scope.values, attrs.hyperAction)
               : hyper.submit(method, action, $scope.values, onfinish);
@@ -138,6 +139,7 @@ pkg.directive('hyperForm', [
         function onfinish(err, res) {
           $safeApply.call($scope, function() {
             delete $scope.hyperFormLoading;
+            elem.removeClass('ng-hyper-form-loading');
             handle(err, res);
             if (err) $scope.hyperFormError = err.error;
             // TODO what are other status that we want to expose?

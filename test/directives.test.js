@@ -82,6 +82,12 @@ describe('directives', function() {
       expect(elem).not.toBeLoaded();
       expect(elem).toHaveText('');
     });
+
+    it('should bind the element text to "0"', function() {
+      var elem = html('<div hyper-bind=".users.zero"></div>');
+      expect(elem).toBeLoaded();
+      expect(elem).toHaveText('0');
+    });
   });
 
   describe('hyper-form', function() {
@@ -269,6 +275,7 @@ describe('directives', function() {
       .respond({
         href: '/api/users',
         key: 'value',
+        zero: 0,
         friends: {
           href: '/api/users/friends'
         },

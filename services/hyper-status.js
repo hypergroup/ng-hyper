@@ -20,7 +20,7 @@ pkg.factory('hyperStatus', [
         elem.addClass('ng-hyper-loaded');
       },
       isLoaded: function(value) {
-        return !!(value === 0 || value === false || value);
+        return typeof value !== 'undefined';
       }
     };
   }
