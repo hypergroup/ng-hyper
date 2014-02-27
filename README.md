@@ -104,9 +104,41 @@ Instead of using a combination of `hyper` and `ng-bind` use `hyper-bind` instead
 
 #### hyper-link
 
+`TODO`
+
+```html
+<ul data-hyper=".users">
+  <li data-ng-repeat="user in users">
+    <a data-hyper-link="/users/:user" data-hyper-bind="user.name"></a>
+  </li>
+</ul>
+```
+
 #### hyper-form
 
+`TODO`
+
+```html
+<div data-hyper=".account">
+  <form data-hyper-form="account">
+    <!-- 'inputs' is now available in the scope -->
+  </form>
+</div>
+```
+
 #### hyper-input
+
+`TODO`
+
+```html
+<div data-hyper=".account">
+  <form data-hyper-form="account">
+    <div data-ng-repeat="input in inputs">
+      <input data-hyper-input="input" />
+    </div>
+  </form>
+</div>
+```
 
 #### hyper-img
 
@@ -124,9 +156,31 @@ Instead of using a combination of `hyper` and `ng-src` use `hyper-img` instead.
 
 #### hyper-redirect
 
+`TODO`
+
+```html
+<div data-hyper-redirect="/users/:.account"></div>
+```
+
 ### Services
 
+#### hyper
+
+#### hyperPath
+
+#### hyperLink
+
+#### hyperLinkFormatter
+
+#### hyperBackend
+
+#### hyperHttpEmitter
+
+#### hyperStatus
+
 ### Controllers
+
+#### hyper
 
 Concepts
 --------
