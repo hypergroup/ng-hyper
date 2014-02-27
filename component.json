@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "keywords": [],
   "dependencies": {
-    "CamShaft/websafe-base64": "*",
+    "camshaft/websafe-base64": "*",
     "component/emitter": "*",
     "component/map": "*",
     "component/querystring": "*",
