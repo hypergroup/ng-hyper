@@ -115,10 +115,10 @@ Instead of using a combination of `hyper` and `ng-src` use `hyper-img` instead.
 ```html
 <div data-hyper=".account">
   <!-- more verbose -->
-  <span data-hyper="account.image.src" data-ng-img="{{src}}"></span>
+  <img data-hyper="account.image.src" data-ng-src="{{src}}"></img>
 
   <!-- less verbose -->
-  <span data-hyper-img="account.image"></span>
+  <img data-hyper-img="account.image"></img>
 </div>
 ```
 
