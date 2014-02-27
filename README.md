@@ -135,6 +135,8 @@ Concepts
 
 `ng-hyper` uses the hypermedia type [hyper+json](https://github.com/hypergroup/hyper-json). It is recommended reading the spec before using `ng-hyper`.
 
+This toolset can most accurately be thought of as a 'hypermedia transformer' that takes one hypermedia format (hyper+json) and converts into another (HTML), similar to [XSLT](http://en.wikipedia.org/wiki/XSLT) (only much simpler).
+
 ### Path traversal
 
 `ng-hyper` makes it easy to consume hyper+json apis by wrapping traversal of links and properties in a consistent syntax. The path syntax is represented by the 'dot notation'.
