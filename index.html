@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ng-hyper -Client tools for angular.js</title>
+    <link rel="stylesheet" href="public/stylesheets/style.css">
+    <link rel="stylesheet" href="public/stylesheets/codemirror.css">
+    <!-- link(rel='stylesheet', href='public/icons/css/slate.css')-->
+    <!-- link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Italiana&subset=latin')-->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Expletus+Sans:400,500">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  </head>
+  <body>
+    <section id="top">
+      <div id="menu"><a id="toggle" href="#"><i class="icon-menu"></i></a>
+        <ul>
+          <li><a href="#introduction">Introduction</a></li>
+        </ul>
+      </div>
+      <div id="heading">
+        <div id="logo">ng-hyper</div>
+        <div id="tagline">Client tools for angular.js</div>
+      </div>
+    </section>
+    <section>
+      <div class="content">
+        <h1 id="introduction">Introduction</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+          sed do eiusmod tempor incididunt ut labore et dolore magna
+          aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+          ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          
+        </p>
+      </div>
+    </section>
+    <section>
+      <div class="content">
+# Header
+
+Some text or something.
+<br>
+        <textarea id="example-html" rows="7" class="mirror">
+          <div>
+            <ul data-hyper=".users">
+              <li data-ng-repeat="user in users" data-hyper-bind="user.name"></li>
+            </ul>
+          </div>
+        </textarea>
+        <textarea id="example-json" rows="7" class="mirror">
+          {
+            "href": "/",
+            "users": {
+              "href": "/users"
+            }
+          }
+          ...
+          {
+            "href": "/users",
+            "collection": [
+              {"name": "Cameron"},
+              {"name": "Tim"},
+              {"name": "Mike"}
+            ]
+          }
+        </textarea>
+        <script id="example-output" type="text/x-minstache" data-codedoc="{&quot;json&quot;: &quot;example-json&quot;, &quot;html&quot;: &quot;example-html&quot;}" class="target">
+          <div data-ng-app="app">{{!html}}</div>
+          <script type="application/json" id="json">{{!json}}</{{closeScript}}>
+          <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.js"></{{closeScript}}>
+          <script src="http://code.angularjs.org/1.2.12/angular-mocks.js"></{{closeScript}}>
+          <script src="http://hypergroup.github.io/ng-hyper/code/ng-hyper-0.1.0.js"></{{closeScript}}>
+          <script>
+          
+            angular.module('app', ['ng-hyper', 'ngMockE2E'])
+              .config(function($provide) {
+                $provide.value('hyperHttpRoot', '/');
+              })
+              .run(function($injector){
+                var apis =  document.getElementById('json').text.split('...').map(function(api){
+                  try {
+                    return JSON.parse(api);
+                  } catch(e) {console.error(e)}
+                });
+                var $http = $injector.get('$httpBackend');
+                apis.forEach(function(api){
+                  console.log('API', api);
+                  $http.when('GET', api.href).respond(api);
+                });
+              });
+              
+          </{{closeScript}}>
+          
+        </script>
+      </div>
+    </section>
+    <script src="build/build.js"></script>
+    <script>
+      var codedoc = require('codedoc');
+      var mirror = require('CodeMirror');
+      
+      initialize('example-html', 'html');
+      initialize('example-json', 'json');
+      
+      function initialize(id, mode){
+        var opts = {
+          'lineNumbers': true,
+          'mode': mode
+        };
+        
+        var input = document.getElementById(id);
+        var instance = mirror.fromTextArea(input, opts);
+        var textarea = instance.getTextArea();
+        
+        instance.on('keyup', function(){
+          var event = new Event('keyup');
+          textarea.value = instance.getValue();
+          textarea.dispatchEvent(event);
+        });
+      }
+      
+      codedoc(document.getElementById('example-output'));
+    </script>
+  </body>
+</html>

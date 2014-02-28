@@ -1,0 +1,172 @@
+* {
+  -webkit-box-sizing: border-box;
+}
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+body {
+  font-size: 17px;
+  line-height: 25.5px;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+  background: #fff;
+  margin: 0;
+  color: #33333d;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+a {
+  color: #33a0c0;
+}
+section {
+  min-height: 50%;
+}
+section:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+section:not(#top) {
+  padding: 150px 100px;
+  text-align: center;
+}
+section:nth-child(2n) {
+  background: #fdfdfd;
+  box-shadow: inset 0 1px 0 0 #fff;
+}
+pre {
+  background: #fff;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 25px;
+  font-size: 0.9em;
+  font-family: monospace;
+  overflow-x: auto;
+}
+.content {
+  margin: 0 auto;
+  max-width: 750px;
+  text-align: left;
+}
+.content img {
+  width: 100%;
+}
+p {
+  font-weight: 300;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+}
+code {
+  font-family: monospace;
+  font-size: 0.9em;
+}
+h1 {
+  margin-top: 0;
+  font-size: 2em;
+}
+h1:not(:first-child) {
+  margin-top: 50px;
+}
+h2 {
+  margin-top: 80px;
+  font-size: 1.2em;
+}
+h3 {
+  margin-top: 40px;
+  font-size: 1em;
+}
+ul li {
+  font-size: 0.8em;
+}
+#top {
+  height: 100%;
+}
+#heading {
+  -webkit-user-select: none;
+  position: absolute;
+  top: 50%;
+  margin-top: -150px;
+  text-align: center;
+  width: 100%;
+  margin-top: -75px;
+}
+#logo {
+  font: 150px "Expletus Sans", sans-serif;
+  text-transform: lowercase;
+  font-size: 75px;
+}
+#tagline {
+  font-size: 16px;
+  font-size: 12px;
+}
+#menu {
+  position: fixed;
+  top: 35px;
+  right: 30px;
+  z-index: 50;
+}
+#menu:hover ul {
+  display: block;
+}
+#menu:hover a#toggle {
+  border: 1px solid #efefef;
+  border-bottom: none;
+}
+#menu a {
+  color: inherit;
+}
+#menu a#toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 2px;
+  border: 1px solid transparent;
+  z-index: 5;
+}
+#menu ul {
+  display: none;
+  position: absolute;
+  top: 35px;
+  right: 0;
+  margin: 0;
+  border: 1px solid #efefef;
+  border-bottom: 1px solid #ddd;
+  border-radius: 2px;
+  padding: 25px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 1px 3px 0 #eee;
+}
+#menu ul li {
+  list-style: none;
+}
+#menu ul li a {
+  display: block;
+  text-decoration: none;
+  padding: 3px 0;
+}
+#menu ul li a:hover {
+  text-decoration: underline;
+}
+@media screen and (max-width: 700px) {
+  section not(#top) {
+    padding: 50px 25px;
+  }
+}
+@media screen and (max-width: 500px) {
+  body {
+    font-size: 13px;
+  }
+}
+textarea {
+  width: 50%;
+  font-family: monospace;
+  font-size: 15px;
+  line-height: 18px;
+  border-style: none;
+}
+textarea,
+textarea:focus {
+  outline: none;
+  padding: 10px;
+}

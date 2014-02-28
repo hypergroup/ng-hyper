@@ -1,0 +1,9 @@
+{
+  "name": "ng-hyper-docs",
+  "repo": "hyper-group/ng-hyper",
+  "version": "0.0.0",
+  "dependencies": {
+    "camshaft/codedoc": "*",
+    "mndvns/CodeMirror": "*"
+  }
+}
