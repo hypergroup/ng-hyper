@@ -47,7 +47,7 @@ pkg.directive('hyperForm', [
 
           $scope.set = initSet($scope.inputs);
           $scope.submit = initSubmit(config.method, config.action);
-          $scope.reset = initReset();
+          $scope.reset = initReset($scope.inputs);
 
           return status.loaded(elem);
         }
@@ -134,9 +134,11 @@ pkg.directive('hyperForm', [
           };
         }
 
-        function initReset() {
+        function initReset(inputs) {
           return function reset() {
-            // TODO
+            each(inputs, function(input) {
+              input.$model = '';
+            });
           };
         }
 
