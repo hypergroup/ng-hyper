@@ -21,6 +21,28 @@ Add `ng-hyper` as a dependency of your angular app.
 angular.module('my-app', ['ng-hyper']);
 ```
 
+Building ng-hyper (optional)
+------------
+```sh
+$ npm install
+$ make build
+```
+
+Running tests
+------------
+
+By default, tests are run against AngularJS 1.0.8.
+
+```sh
+$ make tests
+```
+
+To switch AngularJS version, override the NG_VERSION variable with a different value, e.g.
+
+```sh
+$ make tests NG_VERSION=1.1.0
+```
+
 Components
 ----------
 
