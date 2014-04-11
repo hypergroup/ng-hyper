@@ -123,7 +123,7 @@ describe('directives', function() {
         name: 'name',
         $model: ''
       };
-      var elem = unwrapElement(html('<input hyper-input="input" />'));
+      var elem = unwrapElement(html('<div><input hyper-input="input" /></div>'));
 
       expect(elem.prop('type')).toBe('text');
       expect(elem.prop('placeholder')).toBe('enter your name');
@@ -143,7 +143,7 @@ describe('directives', function() {
         $model: ''
       };
 
-      var parent = html('<input hyper-input="input" />')
+      var parent = html('<div><input hyper-input="input" /></div>');
       var elem = unwrapElement(parent);
       expect(elem).toBeType('input');
       expect(elem.length).toBe(1);
@@ -164,6 +164,19 @@ describe('directives', function() {
       expect(elem).toBeType('select');
       expect(elem.length).toBe(1);
       expect(elem.children().length).toBe($scope.input.options.length + 1); // angular adds an empty option by default
+    });
+
+    it('should override the default bindings', function() {
+      $scope.input = {
+        type: 'text',
+        name: 'name',
+        $model: '',
+        placeholder: 'bar'
+      };
+
+      var elem = unwrapElement(html('<div><input hyper-input="input" placeholder="foo" data-other="hello" /></div>'));
+      expect(elem.prop('data-other')).toBe('hello');
+      expect(elem.prop('placeholder')).toBe('foo');
     });
   });
 
