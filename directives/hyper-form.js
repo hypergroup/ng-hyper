@@ -61,7 +61,7 @@ pkg.directive('hyperForm', [
           delete $scope.submit;
           delete $scope.reset;
 
-          return status.loading(elem);
+          return status.undef(elem);
         }
 
         function getInputs(inputs, $scope) {

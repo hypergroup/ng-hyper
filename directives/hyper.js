@@ -40,7 +40,7 @@ pkg.directive('hyper', [
             $scope[t] = merge($scope[t], value);
 
             if (status.isLoaded(value)) return status.loaded(elem);
-            return status.loading(elem);
+            return status.undef(elem);
           });
         });
       }
