@@ -5,18 +5,21 @@ describe('directives', function() {
     it('should load a value into the scope', function() {
       var elem = html('<div hyper=".users.key"></div>');
       expect(elem).toBeLoaded();
+      expect(elem).toBeHyperDefined();
       expect(elem.scope().key).toBe('value');
     });
 
     it('should load a renamed value into the scope', function() {
       var elem = html('<div hyper=".users.key as other"></div>');
       expect(elem).toBeLoaded();
+      expect(elem).toBeHyperDefined();
       expect(elem.scope().other).toBe('value');
     });
 
     it('should not be able to traverse a non-existant link', function() {
       var elem = html('<div hyper=".i-dont-exist"></div>');
-      expect(elem).not.toBeLoaded();
+      expect(elem).toBeLoaded();
+      expect(elem).not.toBeHyperDefined();
       expect(elem.scope()['i-dont-exist']).not.toBeDefined();
     });
 
@@ -38,7 +41,8 @@ describe('directives', function() {
       var elem = html('<div hyper=".users"><div hyper="users.non-existant.value"></div></div>');
       expect(elem).toBeLoaded();
       var child = elem.find('div');
-      expect(child).not.toBeLoaded();
+      expect(child).toBeLoaded();
+      expect(child).not.toBeHyperDefined();
       expect(child.scope().value).not.toBeDefined();
     });
 
@@ -79,7 +83,8 @@ describe('directives', function() {
 
     it('should not bind to a non-existant value', function() {
       var elem = html('<div hyper-bind=".users.non-existant"></div>');
-      expect(elem).not.toBeLoaded();
+      expect(elem).toBeLoaded();
+      expect(elem).not.toBeHyperDefined();
       expect(elem).toHaveText('');
     });
 
@@ -228,11 +233,19 @@ describe('directives', function() {
       toBeLoaded: function() {
         var not = this.isNot ? ' not' : '';
         this.message = function() {
-          return 'Expected ' + this.actual +  not + ' to be loaded';
+          return 'Expected ' + this.actual + not + ' to be loaded';
         };
 
         return this.actual.hasClass('ng-hyper-loaded')
           && !this.actual.hasClass('ng-hyper-loading');
+      },
+      toBeHyperDefined: function() {
+        var not = this.isNot ? ' not' : '';
+        this.message = function() {
+          return 'Expected ' + this.actual + not + ' to be hyper-defined';
+        };
+
+        return this.actual.hasClass('ng-hyper-loaded-defined');
       },
       toEndWith: function(text) {
         var not = this.isNot ? ' not' : '';

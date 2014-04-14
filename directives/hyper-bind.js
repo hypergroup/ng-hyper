@@ -26,7 +26,7 @@ pkg.directive('hyperBind', [
           elem.text(format(value));
 
           if (status.isLoaded(value)) return status.loaded(elem);
-          return status.loading(elem);
+          return status.undef(elem);
         });
       }
     };

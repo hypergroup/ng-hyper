@@ -41,7 +41,7 @@ pkg.directive('hyperImg', [
           elem.prop('alt', title);
 
           if (isLoaded) return status.loaded(elem);
-          return status.loading(elem);
+          return status.undef(elem);
         });
       }
     };

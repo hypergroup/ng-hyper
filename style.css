@@ -1,3 +1,4 @@
-.ng-hyper-loading {
+.ng-hyper-loading,
+.ng-hyper-loaded-undefined {
   display: none;
 }
