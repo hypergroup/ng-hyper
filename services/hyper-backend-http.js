@@ -7,6 +7,8 @@ var Emitter = require('emitter');
 var parseLinks = require('links-parser');
 
 // set the default api path to '/api'
+var loc = window.location;
+var base = loc.protocol + '//' + loc.host;
 pkg.value('hyperHttpRoot', '/api');
 
 // list of headers to check for refreshes
@@ -22,6 +24,7 @@ pkg.factory('hyperHttpEmitter', [
     var external = new Emitter();
 
     function emitter(href, get) {
+      if (href.indexOf('/') === 0) href = base + href;
       // Proxy the fn so it can be used more than once
       function handle(err, body, links) { get(err, body, links); }
 
