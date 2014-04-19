@@ -85,30 +85,34 @@ pkg.factory('hyperBackend', [
     }
 
     root.get = function(href, fn) {
-      return emitter(href, function get(body) {
-        // The emitter just sent us a new response
-        // We want everyone to have thier own copies as well
-        if (body) return fn(null, angular.copy(body));
+      return emitter(href, get(true));
+      function get(recurse) {
+        return function(body) {
+          // The emitter just sent us a new response
+          // We want everyone to have thier own copies as well
+          if (body) return fn(null, angular.copy(body));
 
-        $http
-          .get(href, {cache: true})
-          .success(function(body, status, headers) {
-            var links = {};
-            try {
-              links = parseLinks(headers('link'));
-            } catch (e) {}
-            fn(null, body, links);
-          })
-          .error(function(err, status) {
-            // Just return an empty body if it's not found
-            if (status === 404) return fn();
-            fn(err);
-          });
-      });
+          $http
+            .get(href, {cache: true})
+            .success(function(body, status, headers) {
+              var links = {};
+              try {
+                links = parseLinks(headers('link'));
+              } catch (e) {}
+              if (recurse && href !== body.href) emitter(body.href, get());
+              fn(null, body, links);
+            })
+            .error(function(err, status) {
+              // Just return an empty body if it's not found
+              if (status === 404) return fn();
+              fn(err);
+            });
+        };
+      }
     };
 
     root.submit = function(method, action, data, fn) {
-      var method = method.toUpperCase();
+      method = method.toUpperCase();
       var req = {method: method, url: action};
 
       if (method === 'GET') req.params = data;
