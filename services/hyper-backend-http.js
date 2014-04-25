@@ -99,7 +99,11 @@ pkg.factory('hyperBackend', [
               try {
                 links = parseLinks(headers('link'));
               } catch (e) {}
-              if (recurse && href !== body.href) emitter(body.href, get());
+
+              if (recurse &&
+                  typeof body.href === 'string' &&
+                  href !== body.href) emitter(body.href, get());
+
               fn(null, body, links);
             })
             .error(function(err, status) {
