@@ -28,6 +28,7 @@ pkg.factory('hyperLink', [
         res.loaded = false;
         return '-';
       });
+      if (res.href.charAt(0) === '/') res.href = res.href.substring(1);
       return res;
     }
 

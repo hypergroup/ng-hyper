@@ -199,7 +199,7 @@ describe('directives', function() {
   describe('hyper-redirect', function() {
     it('should redirect to the link on load', function() {
       var elem = html('<div hyper-redirect="/users/:.users/:.users.key"></div>');
-      expect($location.path()).toBe('/users/L2FwaS91c2Vycw/value');
+      expect($location.path()).toEndWith('/users/L2FwaS91c2Vycw/value');
     });
 
     it('should not redirect when the resource is not found', function() {

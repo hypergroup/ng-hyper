@@ -4,7 +4,7 @@
   "description": "Hyper tools for angular",
   "main": "index.js",
   "dependencies": {
-    "component": "~0.19.3",
+    "component": "^1.0.0",
     "karma": "~0.10.9",
     "karma-jasmine": "~0.1.5",
     "karma-safari-launcher": "~0.1.1",
