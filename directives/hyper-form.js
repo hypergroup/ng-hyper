@@ -124,7 +124,7 @@ pkg.directive('hyperForm', [
             // TODO verify the form is valid
 
             // don't submit if form is in progress
-            if ($scope.hyperFormLoading) return;
+            if ($scope.hyperFormLoading || form.$invalid) return;
 
             $scope.hyperFormLoading = true;
             elem.addClass('ng-hyper-form-loading');
