@@ -1,6 +1,6 @@
 {
   "name": "ng-hyper",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Hyper tools for angular",
   "main": "index.js",
   "dependencies": {
@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/CamShaft/ng-hyper"
+    "url": "https://github.com/hypergroup/ng-hyper"
   },
   "author": "Cameron Bytheway <bytheway.cameron@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CamShaft/ng-hyper/issues"
+    "url": "https://github.com/hypergroup/ng-hyper/issues"
   },
-  "homepage": "https://github.com/CamShaft/ng-hyper"
+  "homepage": "https://github.com/hypergroup/ng-hyper"
 }
