@@ -1,6 +1,6 @@
 {
   "name": "ng-hyper",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Hyper tools for angular",
   "main": "index.js",
   "dependencies": {
