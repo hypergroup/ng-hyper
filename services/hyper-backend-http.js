@@ -80,11 +80,17 @@ pkg.factory('hyperBackend', [
   'hyperHttpEmitter',
   'hyperHttpRefreshHeaders',
   function($http, rootHref, emitter, refreshHeaders) {
+    return {
+      root: root,
+      get: get,
+      submit: submit
+    };
+
     function root(fn) {
-      return root.get(rootHref, fn);
+      return get(rootHref, fn);
     }
 
-    root.get = function(href, fn) {
+    function get(href, fn) {
       return emitter(href, get(true));
       function get(recurse) {
         return function(body) {
@@ -115,7 +121,7 @@ pkg.factory('hyperBackend', [
       }
     };
 
-    root.submit = function(method, action, data, fn) {
+    function submit(method, action, data, fn) {
       method = method.toUpperCase();
       var req = {method: method, url: action};
 
