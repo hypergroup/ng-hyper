@@ -24,6 +24,7 @@ pkg.directive('hyperLink', [
         status.loading(elem);
 
         var href = attrs.hyperLink;
+        var isActive = false;
 
         // watch the location and add an active class
         $scope.$on('$locationChangeSuccess', updateActive);
@@ -35,10 +36,9 @@ pkg.directive('hyperLink', [
           updateActive();
         });
 
-        var isActive = false;
         function updateActive() {
-          if (href === ($location.url() || '/')) return setActive();
           if (isActive) return setInactive();
+          if (href === ($location.url() || '/')) return setActive();
         }
 
         function setActive() {
