@@ -145,6 +145,7 @@ pkg.directive('hyperForm', [
         function onfinish(err, res) {
           $safeApply.call($scope, function() {
             delete $scope.hyperFormLoading;
+            $scope.hyperFormResponse = res;
             elem.removeClass('ng-hyper-form-loading');
             handle(err, res);
             if (err) $scope.hyperFormError = err.error;

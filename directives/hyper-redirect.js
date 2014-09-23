@@ -18,7 +18,7 @@ pkg.directive('hyperRedirect', [
         status.loading(elem);
 
         hyperLink.watch(attrs.hyperRedirect, $scope, function(href) {
-          $location.replace();
+          if (attrs.replace !== 'false') $location.replace();
           $location.path(href);
         });
       }
