@@ -17,59 +17,6 @@ pkg.value('hyperHttpRefreshHeaders', [
   'content-location'
 ]);
 
-pkg.factory('hyperHttpEmitter', [
-  '$http',
-  function($http) {
-    var subs = new Emitter();
-    var external = new Emitter();
-
-    function emitter(href, get) {
-      if (href.indexOf('/') === 0) href = base + href;
-      // Proxy the fn so it can be used more than once
-      function handle(err, body, links) { get(err, body, links); }
-
-      subs.on(href, handle);
-      get();
-
-      if (subs.listeners(href).length === 1) external.emit('subscribe', href);
-
-      return function() {
-        subs.off(href, handle);
-        if (!subs.hasListeners(href)) external.emit('unsubscribe', href);
-      };
-    };
-
-    emitter.refresh = function (href) {
-      // bust the cache for everyone
-      var req = {
-        headers: {
-          'cache-control': 'no-cache'
-        },
-        cache: false
-      };
-
-      $http.get(href, req)
-        .success(function(body, status, headers) {
-          subs.emit(href, body);
-        })
-        .error(function(err) {
-          console.error(err.stack || err);
-          // TODO send error to angular
-        });
-    };
-
-    emitter.subscribe = function(fn) {
-      external.on('subscribe', fn);
-    };
-
-    emitter.unsubscribe = function(fn) {
-      external.on('unsubscribe', fn);
-    };
-
-    return emitter;
-  }
-]);
-
 /**
  * hyper backend http service
  */
@@ -79,7 +26,9 @@ pkg.factory('hyperBackend', [
   'hyperHttpRoot',
   'hyperHttpEmitter',
   'hyperHttpRefreshHeaders',
-  function($http, rootHref, emitter, refreshHeaders) {
+  '$cacheFactory',
+  function($http, rootHref, emitter, refreshHeaders, $cache) {
+    var cache = $cache('hyperHttpCache');
     return {
       root: root,
       get: get,
@@ -99,7 +48,7 @@ pkg.factory('hyperBackend', [
           if (body) return fn(null, angular.copy(body));
 
           $http
-            .get(href, {cache: true})
+            .get(href, {cache: cache})
             .success(function(body, status, headers) {
               var links = {};
               try {
@@ -150,5 +99,62 @@ pkg.factory('hyperBackend', [
     };
 
     return root;
+  }
+]);
+
+pkg.factory('hyperHttpEmitter', [
+  '$http',
+  '$cacheFactory',
+  function($http, $cache) {
+    var subs = new Emitter();
+    var external = new Emitter();
+    var cache;
+
+    function emitter(href, get) {
+      if (href.indexOf('/') === 0) href = base + href;
+      // Proxy the fn so it can be used more than once
+      function handle(err, body, links) { get(err, body, links); }
+
+      subs.on(href, handle);
+      get();
+
+      if (subs.listeners(href).length === 1) external.emit('subscribe', href);
+
+      return function() {
+        subs.off(href, handle);
+        if (!subs.hasListeners(href)) external.emit('unsubscribe', href);
+      };
+    };
+
+    emitter.refresh = function (href) {
+      if (!cache) cache = $cache.get('hyperHttpCache');
+      // bust the cache for everyone
+      cache.remove(href);
+      var req = {
+        headers: {
+          'cache-control': 'no-cache'
+        },
+        cache: false
+      };
+
+      $http.get(href, req)
+        .success(function(body, status, headers) {
+          subs.emit(href, body);
+        })
+        .error(function(err) {
+          console.error(err.stack || err);
+          // TODO send error to angular
+        });
+    };
+
+    emitter.subscribe = function(fn) {
+      external.on('subscribe', fn);
+    };
+
+    emitter.unsubscribe = function(fn) {
+      external.on('unsubscribe', fn);
+    };
+
+    return emitter;
   }
 ]);
