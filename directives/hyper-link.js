@@ -38,7 +38,8 @@ pkg.directive('hyperLink', [
 
         function updateActive() {
           if (isActive) return setInactive();
-          if (href === ($location.url() || '/')) return setActive();
+          var location = $location.url() || '/';
+          if (href === location || '/' + href === location) return setActive();
         }
 
         function setActive() {
