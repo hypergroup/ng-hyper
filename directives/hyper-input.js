@@ -10,12 +10,18 @@ var pkg = require('../package');
  */
 
 pkg.directive('hyperInput', [
-  function() {
+  'hyper',
+  function(hyper) {
     return {
       template: inputs,
       replace: true,
       scope: {
         input: '=hyperInput'
+      },
+      link: function($scope, el, attrs) {
+        hyper.get('input.placeholder', $scope, function(placeholder) {
+          $scope.placeholder = placeholder;
+        });
       }
     };
   }

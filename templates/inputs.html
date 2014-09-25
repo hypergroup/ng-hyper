@@ -1,5 +1,5 @@
 <div data-ng-class="{'ng-hyper-loading': !input, 'ng-hyper-loaded': input}" data-ng-switch="input.type">
   <select data-ng-switch-when="select" name="{{input.name}}" data-ng-model="input.$model" data-ng-required="input.required" data-ng-disabled="input.disabled" data-hyper="input.options" data-ng-options="option.value as (option.name || option.text || option.value) for option in options"></select>
-  <textarea data-ng-switch-when="textarea" name="{{input.name}}" data-ng-model="input.$model" placeholder="{{input.placeholder || input.prompt || input.title || input.name}}" data-ng-required="input.required" data-ng-disabled="input.disabled"></textarea>
-  <input data-ng-switch-default name="{{input.name}}" data-ng-model="input.$model" type="{{input.type}}" placeholder="{{input.placeholder || input.prompt || input.title || input.name}}" data-ng-required="input.required" data-ng-disabled="input.disabled" />
+  <textarea data-ng-switch-when="textarea" name="{{input.name}}" data-ng-model="input.$model" placeholder="{{placeholder || input.prompt || input.title || input.name}}" data-ng-required="input.required" data-ng-disabled="input.disabled"></textarea>
+  <input data-ng-switch-default name="{{input.name}}" data-ng-model="input.$model" type="{{input.type}}" placeholder="{{placeholder || input.prompt || input.title || input.name}}" data-ng-required="input.required" data-ng-disabled="input.disabled" />
 </div>
