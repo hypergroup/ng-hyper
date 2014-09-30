@@ -26,7 +26,10 @@ pkg.directive('hyperForm', [
       link: function($scope, elem, attrs, form) {
         status.loading(elem);
 
-        var handle = getHandleFunction($scope, attrs);
+        var handle;
+        $scope.$watch(attrs.hyperHandle, function(val) {
+          handle = val || angular.noop;
+        });
 
         elem.bind('submit', function() {
           if ($scope.submit) $scope.submit();
