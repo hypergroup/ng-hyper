@@ -18,6 +18,7 @@ exports.hyper = require('./directives/hyper');
 exports.hyperBind = require('./directives/hyper-bind');
 exports.hyperForm = require('./directives/hyper-form');
 exports.hyperImg = require('./directives/hyper-img');
+exports.hyperImgBackground = require('./directives/hyper-img-background');
 exports.hyperInput = require('./directives/hyper-input');
 exports.hyperLink = require('./directives/hyper-link');
 exports.hyperRedirect = require('./directives/hyper-redirect');
