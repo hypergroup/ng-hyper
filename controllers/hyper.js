@@ -15,10 +15,11 @@ var isCrossDomain = require('url').isCrossDomain;
 
 pkg.controller('HyperController', [
   '$scope',
+  '$rootScope',
   '$routeParams',
   'hyperBackend',
   'hyperLinkFormatter',
-  function HyperController($scope, $routeParams, hyper, hyperLinkFormatter) {
+  function HyperController($scope, $rootScope, $routeParams, hyper, hyperLinkFormatter) {
     // keep track of current the subscriptions
     var subscriptions = {};
 
@@ -58,9 +59,10 @@ pkg.controller('HyperController', [
         // subscribe to the href
         subscriptions[key] = hyper
           .get(href, function(err, body) {
-            // TODO handle error with angular
-            if (err) return console.error(err.stack || err);
-
+            if (err) {
+              $rootScope.$broadcast('hyperError', err, body);
+              return console.error(err.stack || err);
+            }
             $safeApply.call($scope, function() {
               $scope[key] = merge($scope[key], body);
             });
