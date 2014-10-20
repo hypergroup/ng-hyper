@@ -124,7 +124,6 @@ pkg.directive('hyperForm', [
           method = (method || 'GET').toUpperCase();
           return function submit() {
             // TODO if the method is idempotent and the form is pristine don't submit
-            // TODO verify the form is valid
 
             // don't submit if form is in progress
             if ($scope.hyperFormLoading || form.$invalid) return;
@@ -133,7 +132,7 @@ pkg.directive('hyperForm', [
             elem.addClass('ng-hyper-form-loading');
             attrs.hyperAction && method === 'GET'
               ? followLink(action, $scope.values, attrs.hyperAction)
-              : hyper.submit(method, action, $scope.values, onfinish);
+              : hyper.submit(method, action, $scope.values, onfinish, !!attrs.hyperDisableRefresh);
           };
         }
 

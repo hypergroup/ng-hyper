@@ -70,7 +70,7 @@ pkg.factory('hyperBackend', [
       }
     };
 
-    function submit(method, action, data, fn) {
+    function submit(method, action, data, fn, disableRefresh) {
       method = method.toUpperCase();
       var req = {method: method, url: action};
 
@@ -87,7 +87,7 @@ pkg.factory('hyperBackend', [
 
           if (method === 'GET') return;
 
-          emitter.refresh(action);
+          if (disableRefresh) emitter.refresh(action);
           angular.forEach(refreshHeaders, function(header) {
             var href = headers(header);
             if (href) emitter.refresh(href);
