@@ -13,7 +13,7 @@
     "component/url": "*",
     "hypergroup/hyper-path": "^1.0.0",
     "yields/slug": "*",
-    "camshaft/links-parser": "*"
+    "camshaft/links-parser": "^0.1.0"
   },
   "development": {},
   "license": "MIT",

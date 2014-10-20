@@ -92,6 +92,13 @@ pkg.factory('hyperBackend', [
             var href = headers(header);
             if (href) emitter.refresh(href);
           });
+
+          // http://tools.ietf.org/html/draft-nottingham-linked-cache-inv-03#section-3
+          var invalidates = links.invalidates;
+          invalidates = typeof invalidates === 'string' ? [invalidates] : invalidates;
+          angular.forEach(links.invalidates || [], function(href) {
+            emitter.refresh(href);
+          });
         })
         .error(function(err) {
           fn(err);
