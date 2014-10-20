@@ -40,8 +40,8 @@ pkg.factory('hyper', [
       return req;
     }
 
-    function submit(method, action, data, fn) {
-      backend.submit(method, action, data, fn);
+    function submit(method, action, data, fn, disableRefresh) {
+      backend.submit(method, action, data, fn, disableRefresh);
     }
 
     return {

@@ -87,7 +87,7 @@ pkg.factory('hyperBackend', [
 
           if (method === 'GET') return;
 
-          if (disableRefresh) emitter.refresh(action);
+          if (!disableRefresh) emitter.refresh(action);
           angular.forEach(refreshHeaders, function(header) {
             var href = headers(header);
             if (href) emitter.refresh(href);
