@@ -29,6 +29,7 @@ pkg.factory('hyperBackend', [
   '$cacheFactory',
   function($http, rootHref, emitter, refreshHeaders, $cache) {
     var cache = $cache('hyperHttpCache');
+
     return {
       root: root,
       get: get,
@@ -40,6 +41,9 @@ pkg.factory('hyperBackend', [
     }
 
     function get(href, fn) {
+      // strip any hashes
+      href = href.replace(/#.*/, '');
+
       return emitter(href, get(true));
       function get(recurse) {
         return function(body) {
