@@ -16,11 +16,11 @@ var isCrossDomain = require('url').isCrossDomain;
 pkg.controller('HyperController', [
   '$scope',
   '$routeParams',
-  'hyperBackend',
+  'hyper',
   'hyperLinkFormatter',
   function HyperController($scope, $routeParams, hyper, hyperLinkFormatter) {
     // keep track of current the subscriptions
-    var subscriptions = {};
+    var scopes = {};
 
     $scope.$watch(function() {
       return $routeParams;
@@ -32,9 +32,9 @@ pkg.controller('HyperController', [
         if ($routeParams[key] == value) return;
 
         // unsubscribe from the old url and clean up the scope
-        if (subscriptions[key]) subscriptions[key]();
+        if (scopes[key]) scopes[key].$destroy();
         delete $scope[key];
-        delete subscriptions[key];
+        delete scopes[key];
       });
 
       // add the new params
@@ -55,23 +55,12 @@ pkg.controller('HyperController', [
         // TODO give an error message
         // if (isCrossDomain(href)) return;
 
-        // subscribe to the href
-        subscriptions[key] = hyper
-          .get(href, function(err, body) {
-            // TODO handle error with angular
-            if (err) return console.error(err.stack || err);
-
-            $safeApply.call($scope, function() {
-              $scope[key] = merge($scope[key], body);
-            });
-          });
+        var requestScope = scopes[key] = $scope.$new(true);
+        requestScope.value = {href: href};
+        hyper.get('value', requestScope, function(body, req) {
+          $scope[key] = merge($scope[key], body);
+        });
       });
     }, true);
-
-    $scope.$on('$destroy', function() {
-      each(subscriptions, function(off) {
-        off();
-      });
-    });
   }
 ]);
