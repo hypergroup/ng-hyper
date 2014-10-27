@@ -2,7 +2,7 @@
   "name": "ng-hyper",
   "repo": "hypergroup/ng-hyper",
   "description": "Hyper tools for angular",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "keywords": [],
   "dependencies": {
     "camshaft/websafe-base64": "*",
