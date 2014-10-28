@@ -20,14 +20,16 @@ pkg.directive('hyperInput', [
       },
       compile: function compile(tElement, tAttrs) {
         var inputClass = tAttrs.class;
+        var placeholder = tAttrs.placeholder;
         tElement.removeClass(tAttrs.class);
         return {
           pre: function preLink(scope, iElement, iAttrs, controller) {
             scope.inputClass = inputClass;
+            scope.placeholder = placeholder;
           },
           post: function postLink($scope, el, attrs) {
             hyper.get('input.placeholder', $scope, function(placeholder) {
-              $scope.placeholder = placeholder;
+              if (placeholder) $scope.placeholder = placeholder;
             });
           }
         };
