@@ -19,8 +19,8 @@ pkg.directive('hyperInput', [
         input: '=hyperInput'
       },
       compile: function compile(tElement, tAttrs) {
-        var inputClass = tAttrs.class;
-        tElement.removeClass(tAttrs.class);
+        var inputClass = tAttrs['class'];
+        tElement.removeClass(tAttrs['class']);
         return {
           pre: function preLink(scope, iElement, iAttrs, controller) {
             scope.inputClass = inputClass;
