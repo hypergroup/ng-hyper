@@ -11,9 +11,10 @@ var slug = require('slug');
  */
 
 pkg.factory('hyperLinkFormatter', [
-  function() {
+  'hyperHttpRoot',
+  function(root) {
     function encode(value) {
-      if (value && value.href) return websafe.encode(value.href);
+      if (value && value.href) return websafe.encode(value.href.replace(root, '~'));
       if (angular.isString(value)) return slug(value);
       if (angular.isNumber(value)) return '' + value;
       return '-';
@@ -21,7 +22,7 @@ pkg.factory('hyperLinkFormatter', [
 
     function decode(str) {
       try {
-        return websafe.decode(str);
+        return websafe.decode(str).replace('~', root);
       } catch (e) {}
     }
 
