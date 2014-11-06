@@ -9,7 +9,7 @@ var parseLinks = require('links-parser');
 // set the default api path to '/api'
 var loc = window.location;
 var base = loc.protocol + '//' + loc.host;
-pkg.value('hyperHttpRoot', '/api');
+pkg.value('hyperHttpRoot', base + '/api');
 
 // list of headers to check for refreshes
 pkg.value('hyperHttpRefreshHeaders', [
