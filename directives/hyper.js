@@ -29,16 +29,17 @@ pkg.directive('hyper', [
 
         var exprs = attrs.hyper.trim().split(/ *, */);
 
-        angular.forEach(exprs, function(expr) {
+        var exprVals = [];
+        angular.forEach(exprs, function(expr, i) {
           // split the command to allow binding to arbitrary names
           var parts = expr.split(/ +as +/);
           var paths = parts[0].split(/ +or +/);
           var target = parts[1];
 
           var responses = [];
-          angular.forEach(paths, function(path, i) {
+          angular.forEach(paths, function(path, j) {
             hyper.get(path, $scope, function(value, req) {
-              responses[i] = {target: target || req.target, value: value};
+              responses[j] = {target: target || req.target, value: value};
               update();
             });
           });
@@ -46,12 +47,18 @@ pkg.directive('hyper', [
           function update() {
             var res = select(responses);
             var t = res ? res.target : target;
-            var value = res ? res.value : undefined;
+            var value = exprVals[i] = res ? res.value : undefined;
             $scope[t] = merge($scope[t], value);
-            if (status.isLoaded(value)) return status.loaded(elem);
-            return status.undef(elem);
+            updateStatus();
           }
         });
+
+        function updateStatus() {
+          for (var k = 0, l = exprVals.length; k < l; k++) {
+            if (!status.isLoaded(exprVals[k])) return status.undef(elem);
+          }
+          status.loaded(elem);
+        }
       }
     };
   }
@@ -69,7 +76,7 @@ function select(responses) {
     var res = responses[i];
     // bail because the higher precidence paths haven't finished
     if (!res) return null;
-    if (!res.value) continue;
+    if (!res.value && i !== l - 1) continue;
     return res;
   }
 }
