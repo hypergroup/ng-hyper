@@ -27,23 +27,49 @@ pkg.directive('hyper', [
       link: function($scope, elem, attrs) {
         status.loading(elem);
 
-        var exprs = attrs.hyper.split(',');
+        var exprs = attrs.hyper.trim().split(/ *, */);
 
         angular.forEach(exprs, function(expr) {
           // split the command to allow binding to arbitrary names
-          var parts = expr.trim().split(' as ');
-          var path = parts[0];
+          var parts = expr.split(/ +as +/);
+          var paths = parts[0].split(/ +or +/);
           var target = parts[1];
 
-          hyper.get(path, $scope, function(value, req) {
-            var t = target || req.target;
-            $scope[t] = merge($scope[t], value);
+          var responses = [];
+          angular.forEach(paths, function(path, i) {
+            hyper.get(path, $scope, function(value, req) {
+              responses[i] = {target: target || req.target, value: value};
+              update();
+            });
+          });
 
+          function update() {
+            var res = select(responses);
+            var t = res ? res.target : target;
+            var value = res ? res.value : undefined;
+            $scope[t] = merge($scope[t], value);
             if (status.isLoaded(value)) return status.loaded(elem);
             return status.undef(elem);
-          });
+          }
         });
       }
     };
   }
 ]);
+
+/**
+ * Iterate through the available responses and pick first first defined response
+ *
+ * @param {Array} responses
+ * @return {Object|Null}
+ */
+
+function select(responses) {
+  for (var i = 0, l = responses.length; i < l; i++) {
+    var res = responses[i];
+    // bail because the higher precidence paths haven't finished
+    if (!res) return null;
+    if (!res.value) continue;
+    return res;
+  }
+}

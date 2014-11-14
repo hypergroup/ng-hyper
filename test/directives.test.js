@@ -178,7 +178,7 @@ describe('directives', function() {
       expect(elem).toBeLoaded();
       var child = elem.children();
       expect(child).toBeLoaded();
-      expect(child.prop('href')).toEndWith('/users/L2FwaS91c2Vycw');
+      expect(child.prop('href')).toEndWith('/users/fi91c2Vycw');
     });
 
     it('should create a slug from a string value', function() {
@@ -186,20 +186,20 @@ describe('directives', function() {
       expect(elem).toBeLoaded();
       var child = elem.children();
       expect(child).toBeLoaded();
-      expect(child.prop('href')).toEndWith('/users/L2FwaS91c2Vycw/value');
+      expect(child.prop('href')).toEndWith('/users/fi91c2Vycw/value');
     });
 
     it('should traverse paths to encode a link', function() {
       var elem = html('<a hyper-link="/link/:.users.friends.other"></a>');
       expect(elem).toBeLoaded();
-      expect(elem.prop('href')).toEndWith('/link/L2FwaS9vdGhlcg');
+      expect(elem.prop('href')).toEndWith('/link/fi9vdGhlcg');
     });
   });
 
   describe('hyper-redirect', function() {
     it('should redirect to the link on load', function() {
       var elem = html('<div hyper-redirect="/users/:.users/:.users.key"></div>');
-      expect($location.path()).toEndWith('/users/L2FwaS91c2Vycw/value');
+      expect($location.path()).toEndWith('/users/fi91c2Vycw/value');
     });
 
     it('should not redirect when the resource is not found', function() {
@@ -209,7 +209,9 @@ describe('directives', function() {
   });
 
   // Helpers
-  beforeEach(module('ng-hyper'));
+  beforeEach(module('ng-hyper', function($provide) {
+    $provide.value('hyperHttpRoot', '/api');
+  }));
 
   beforeEach(function() {
     this.addMatchers({
