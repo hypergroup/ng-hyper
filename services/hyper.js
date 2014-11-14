@@ -10,9 +10,10 @@ var $safeApply = require('../lib/utils').$safeApply;
  */
 
 pkg.factory('hyper', [
+  '$exceptionHandler',
   'hyperBackend',
   'hyperPath',
-  function(backend, request) {
+  function($exceptionHandler, backend, request) {
     function get(path, $scope, fn) {
       var req = request(path, backend);
 
@@ -26,8 +27,7 @@ pkg.factory('hyper', [
 
       // listen to any updates from the api
       req.on(function(err, value) {
-        // TODO emit errors to angular here
-        if (err) return console.error(err.stack || err);
+        if (err) return $exceptionHandler(err);
         $safeApply.call($scope, function() {
           fn(value, req);
         });
