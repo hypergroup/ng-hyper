@@ -34,17 +34,6 @@ pkg.directive('hyperInput', [
             }
             watch('placeholder');
             watch('prompt');
-            watch('options', function(options) {
-              $scope.options = options = options || [];
-              options.forEach(function(opt) {
-                hyper.get('option.text', {option: opt}, function(text) {
-                  opt.text = text;
-                  try {
-                    $scope.$digest();
-                  } catch (e) {}
-                });
-              });
-            });
           }
         };
       }

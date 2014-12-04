@@ -1540,6 +1540,7 @@ exports.hyperForm = require("ng-hyper/directives/hyper-form.js");
 exports.hyperImg = require("ng-hyper/directives/hyper-img.js");
 exports.hyperImgBackground = require("ng-hyper/directives/hyper-img-background.js");
 exports.hyperInput = require("ng-hyper/directives/hyper-input.js");
+exports.hyperInputOptions = require("ng-hyper/directives/hyper-input-options.js");
 exports.hyperLink = require("ng-hyper/directives/hyper-link.js");
 exports.hyperRedirect = require("ng-hyper/directives/hyper-redirect.js");
 
@@ -2029,19 +2030,49 @@ pkg.directive('hyperInput', [
             }
             watch('placeholder');
             watch('prompt');
-            watch('options', function(options) {
-              $scope.options = options = options || [];
-              options.forEach(function(opt) {
-                hyper.get('option.text', {option: opt}, function(text) {
-                  opt.text = text;
-                  try {
-                    $scope.$digest();
-                  } catch (e) {}
-                });
-              });
-            });
           }
         };
+      }
+    };
+  }
+]);
+
+});
+
+require.register("ng-hyper/directives/hyper-input-options.js", function (exports, module) {
+/**
+ * Module dependencies
+ */
+
+var pkg = require("ng-hyper/package.js");
+
+/**
+ * hyperInput
+ */
+
+pkg.directive('hyperInputOptions', [
+  'hyper',
+  function(hyper) {
+    return {
+      link: function ($scope, el, attrs) {
+        hyper.get(attrs.hyperInputOptions, $scope, function(options) {
+          $scope.options = options = options || [];
+          angular.forEach(options, function(opt) {
+            var scope = {options: opt};
+
+            function set(key) {
+              hyper.get(key, opt, function(val) {
+                opt[key] = val;
+                try {
+                  $scope.$digest();
+                } catch (e) {}
+              });
+            }
+
+            set('text');
+            set('value');
+          });
+        });
       }
     };
   }
@@ -2711,7 +2742,7 @@ function shallowMerge(a, b) {
 
 });
 
-require.define("ng-hyper/templates/inputs.html", "<div data-ng-class=\"{'ng-hyper-loading': !input, 'ng-hyper-loaded': input}\" data-ng-switch=\"input.type\">\n  <select data-ng-switch-when=\"select\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" data-ng-options=\"option.value as (option.name || option.text || option.value) for option in options\" class=\"{{inputClass}}\"></select>\n  <textarea data-ng-switch-when=\"textarea\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\"></textarea>\n  <input data-ng-switch-default name=\"{{input.name}}\" data-ng-model=\"input.$model\" type=\"{{input.type}}\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\" />\n</div>\n");
+require.define("ng-hyper/templates/inputs.html", "<div data-ng-class=\"{'ng-hyper-loading': !input, 'ng-hyper-loaded': input}\" data-ng-switch=\"input.type\">\n  <select data-ng-switch-when=\"select\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" data-hyper-input-options=\"input.options\" data-ng-options=\"option.value as (option.name || option.text || option.value) for option in options\" class=\"{{inputClass}}\"></select>\n  <textarea data-ng-switch-when=\"textarea\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\"></textarea>\n  <input data-ng-switch-default name=\"{{input.name}}\" data-ng-model=\"input.$model\" type=\"{{input.type}}\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\" />\n</div>\n");
 
 if (typeof exports == "object") {
   module.exports = require("ng-hyper");
