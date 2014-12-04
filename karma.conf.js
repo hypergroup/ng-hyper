@@ -26,7 +26,7 @@ module.exports = function(config) {
 
     browsers: SAUCE
       ? ['sl_chrome_linux', 'sl_chrome_windows', 'sl_chrome_mac', 'sl_firefox_linux', 'sl_firefox_windows', 'sl_firefox_mac', 'sl_safari_mac', 'sl_ie7', 'sl_ie8', 'sl_ie9', 'sl_ie10', 'sl_ie11']
-      : ['Chrome', 'Firefox', 'Safari', 'PhantomJS'],
+      : ['Chrome', 'Firefox', 'PhantomJS'],
 
     // TODO wait for sauce to support ws
     // https://github.com/angular/angular.js/blob/master/karma-shared.conf.js#L136

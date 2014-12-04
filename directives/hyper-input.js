@@ -26,8 +26,24 @@ pkg.directive('hyperInput', [
             scope.inputClass = inputClass;
           },
           post: function postLink($scope, el, attrs) {
-            hyper.get('input.placeholder', $scope, function(placeholder) {
-              $scope.placeholder = placeholder;
+            function watch(path, fn) {
+              hyper.get('input.' + path, $scope, function(val) {
+                $scope[path] = val;
+                fn && fn(val);
+              });
+            }
+            watch('placeholder');
+            watch('prompt');
+            watch('options', function(options) {
+              $scope.options = options = options || [];
+              options.forEach(function(opt) {
+                hyper.get('option.text', {option: opt}, function(text) {
+                  opt.text = text;
+                  try {
+                    $scope.$digest();
+                  } catch (e) {}
+                });
+              });
             });
           }
         };

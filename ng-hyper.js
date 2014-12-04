@@ -85,7 +85,7 @@ function encode(string) {
 }
 });
 
-require.register("forbeslindesay~base64-encode@2.0.1", function (exports, module) {
+require.register("forbeslindesay~base64-encode@2.0.2", function (exports, module) {
 var utf8Encode = require("forbeslindesay~utf8-encode@1.0.0");
 var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
@@ -268,7 +268,7 @@ require.register("camshaft~websafe-base64@master", function (exports, module) {
  */
 
 var base64decode = require("forbeslindesay~base64-decode@1.0.2");
-var base64encode = require("forbeslindesay~base64-encode@2.0.1");
+var base64encode = require("forbeslindesay~base64-encode@2.0.2");
 var pad = require("component~pad@master");
 
 /**
@@ -901,7 +901,7 @@ exports.stringify = function(obj){
 
 });
 
-require.register("component~url@0.1.0", function (exports, module) {
+require.register("component~url@0.2.0", function (exports, module) {
 
 /**
  * Parse the given `url`.
@@ -916,15 +916,15 @@ exports.parse = function(url){
   a.href = url;
   return {
     href: a.href,
-    host: a.host,
-    port: a.port,
+    host: a.host || location.host,
+    port: ('0' === a.port || '' === a.port) ? port(a.protocol) : a.port,
     hash: a.hash,
-    hostname: a.hostname,
-    pathname: a.pathname,
-    protocol: a.protocol,
+    hostname: a.hostname || location.hostname,
+    pathname: a.pathname.charAt(0) != '/' ? '/' + a.pathname : a.pathname,
+    protocol: !a.protocol || ':' == a.protocol ? location.protocol : a.protocol,
     search: a.search,
     query: a.search.slice(1)
-  }
+  };
 };
 
 /**
@@ -936,9 +936,7 @@ exports.parse = function(url){
  */
 
 exports.isAbsolute = function(url){
-  if (0 == url.indexOf('//')) return true;
-  if (~url.indexOf('://')) return true;
-  return false;
+  return 0 == url.indexOf('//') || !!~url.indexOf('://');
 };
 
 /**
@@ -950,7 +948,7 @@ exports.isAbsolute = function(url){
  */
 
 exports.isRelative = function(url){
-  return ! exports.isAbsolute(url);
+  return !exports.isAbsolute(url);
 };
 
 /**
@@ -963,13 +961,33 @@ exports.isRelative = function(url){
 
 exports.isCrossDomain = function(url){
   url = exports.parse(url);
-  return url.hostname != location.hostname
-    || url.port != location.port
-    || url.protocol != location.protocol;
+  var location = exports.parse(window.location.href);
+  return url.hostname !== location.hostname
+    || url.port !== location.port
+    || url.protocol !== location.protocol;
 };
+
+/**
+ * Return default port for `protocol`.
+ *
+ * @param  {String} protocol
+ * @return {String}
+ * @api private
+ */
+function port (protocol){
+  switch (protocol) {
+    case 'http:':
+      return 80;
+    case 'https:':
+      return 443;
+    default:
+      return location.port;
+  }
+}
+
 });
 
-require.register("hypergroup~hyper-path@1.0.7", function (exports, module) {
+require.register("hypergroup~hyper-path@1.0.9", function (exports, module) {
 function noop() {}
 
 /**
@@ -1173,7 +1191,7 @@ Request.prototype.handleUndefined = function(key, parent, links, i, path, parent
   // This is necessary for frameworks like Angular where they use prototypal
   // inheritance. The risk is getting a value that is on the root Object.
   // We can at least check that we don't return a function though.
-  var value = parent[key];
+  var value = parent && parent[key];
   if (typeof value === 'function') value = void 0;
   return cb(null, value, parentDocument);
 };
@@ -1357,7 +1375,7 @@ Request.prototype._normalizeTarget = function(target) {
   if (typeof target !== 'object' || !target) return target;
   var href = this._get('href', target);
   target = this._get('collection', target) || this._get('data', target) || target;
-  return this._set('href', href, target);
+  return href ? this._set('href', href, target) : target;
 }
 
 /**
@@ -1569,7 +1587,7 @@ var each = angular.forEach;
 var utils = require("ng-hyper/lib/utils.js");
 var $safeApply = utils.$safeApply;
 var merge = utils.merge;
-var isCrossDomain = require("component~url@0.1.0").isCrossDomain;
+var isCrossDomain = require("component~url@0.2.0").isCrossDomain;
 
 /**
  * HyperController
@@ -1578,9 +1596,10 @@ var isCrossDomain = require("component~url@0.1.0").isCrossDomain;
 pkg.controller('HyperController', [
   '$scope',
   '$routeParams',
+  '$exceptionHandler',
   'hyper',
   'hyperLinkFormatter',
-  function HyperController($scope, $routeParams, hyper, hyperLinkFormatter) {
+  function HyperController($scope, $routeParams, $exceptionHandler, hyper, hyperLinkFormatter) {
     // keep track of current the subscriptions
     var scopes = {};
 
@@ -1613,9 +1632,9 @@ pkg.controller('HyperController', [
         // if it doesn't look like a url don't do anything with it
         if (href.indexOf('http') !== 0 && href.indexOf('/') !== 0) return;
 
-        // don't allow CORS attacks
-        // TODO give an error message
-        // if (isCrossDomain(href)) return;
+        if (isCrossDomain(href)) {
+          return $exceptionHandler(new Error('Cross-domain requests are forbidden'));
+        }
 
         var requestScope = scopes[key] = $scope.$new(true);
         requestScope.value = {href: href};
@@ -2003,8 +2022,24 @@ pkg.directive('hyperInput', [
             scope.inputClass = inputClass;
           },
           post: function postLink($scope, el, attrs) {
-            hyper.get('input.placeholder', $scope, function(placeholder) {
-              $scope.placeholder = placeholder;
+            function watch(path, fn) {
+              hyper.get('input.' + path, $scope, function(val) {
+                $scope[path] = val;
+                fn && fn(val);
+              });
+            }
+            watch('placeholder');
+            watch('prompt');
+            watch('options', function(options) {
+              $scope.options = options = options || [];
+              options.forEach(function(opt) {
+                hyper.get('option.text', {option: opt}, function(text) {
+                  opt.text = text;
+                  try {
+                    $scope.$digest();
+                  } catch (e) {}
+                });
+              });
             });
           }
         };
@@ -2137,26 +2172,59 @@ pkg.directive('hyper', [
       link: function($scope, elem, attrs) {
         status.loading(elem);
 
-        var exprs = attrs.hyper.split(',');
+        var exprs = attrs.hyper.trim().split(/ *, */);
 
-        angular.forEach(exprs, function(expr) {
+        var exprVals = [];
+        angular.forEach(exprs, function(expr, i) {
           // split the command to allow binding to arbitrary names
-          var parts = expr.trim().split(' as ');
-          var path = parts[0];
+          var parts = expr.split(/ +as +/);
+          var paths = parts[0].split(/ +or +/);
           var target = parts[1];
 
-          hyper.get(path, $scope, function(value, req) {
-            var t = target || req.target;
-            $scope[t] = merge($scope[t], value);
-
-            if (status.isLoaded(value)) return status.loaded(elem);
-            return status.undef(elem);
+          var responses = [];
+          angular.forEach(paths, function(path, j) {
+            hyper.get(path, $scope, function(value, req) {
+              responses[j] = {target: target || req.target, value: value};
+              update();
+            });
           });
+
+          function update() {
+            var res = select(responses);
+            var t = res ? res.target : target;
+            var value = exprVals[i] = res ? res.value : undefined;
+            $scope[t] = merge($scope[t], value);
+            updateStatus();
+          }
         });
+
+        function updateStatus() {
+          for (var k = 0, l = exprVals.length; k < l; k++) {
+            if (!status.isLoaded(exprVals[k])) return status.undef(elem);
+          }
+          status.loaded(elem);
+        }
       }
     };
   }
 ]);
+
+/**
+ * Iterate through the available responses and pick first first defined response
+ *
+ * @param {Array} responses
+ * @return {Object|Null}
+ */
+
+function select(responses) {
+  for (var i = 0, l = responses.length; i < l; i++) {
+    var res = responses[i];
+    // bail because the higher precidence paths haven't finished
+    if (!res) return null;
+    if (!res.value && i !== l - 1) continue;
+    return res;
+  }
+}
 
 });
 
@@ -2173,32 +2241,46 @@ var $safeApply = require("ng-hyper/lib/utils.js").$safeApply;
  */
 
 pkg.factory('hyper', [
+  '$exceptionHandler',
   'hyperBackend',
   'hyperPath',
-  function(backend, request) {
+  function($exceptionHandler, backend, request) {
     function get(path, $scope, fn) {
+      if (typeof $scope === 'function') {
+        fn = $scope;
+        $scope = null;
+      };
+
       var req = request(path, backend);
 
       // we're not starting at the root of the api so we need to watch
       // the first property in the path, or `req.index`, as the root
-      if (!req.isRoot) $scope.$watch(req.index, function(parent) {
+      if (!req.isRoot && $scope && $scope.$watch) $scope.$watch(req.index, function(parent) {
         req._root = req.root || {};
         req._root[req.index] = parent;
         req.scope(req._root);
       }, true);
 
+      if ($scope) req.scope($scope);
+
       // listen to any updates from the api
       req.on(function(err, value) {
-        // TODO emit errors to angular here
-        if (err) return console.error(err.stack || err);
-        $safeApply.call($scope, function() {
+        if (err) return $exceptionHandler(err);
+
+        if ($scope && $scope.$apply) return $safeApply.call($scope, function() {
           fn(value, req);
         });
+
+        fn(value, req);
       });
 
-      $scope.$on('$destroy', function() {
+      if ($scope.$on) {
+        $scope.$on('$destroy', function() {
+          req.off();
+        });
+      } else {
         req.off();
-      });
+      }
 
       return req;
     }
@@ -2222,7 +2304,7 @@ require.register("ng-hyper/services/hyper-path.js", function (exports, module) {
  */
 
 var pkg = require("ng-hyper/package.js");
-var request = require("hypergroup~hyper-path@1.0.7");
+var request = require("hypergroup~hyper-path@1.0.9");
 
 /**
  * hyper path service
@@ -2630,7 +2712,7 @@ function shallowMerge(a, b) {
 
 });
 
-require.define("ng-hyper/templates/inputs.html", "<div data-ng-class=\"{'ng-hyper-loading': !input, 'ng-hyper-loaded': input}\" data-ng-switch=\"input.type\">\n  <select data-ng-switch-when=\"select\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" data-hyper=\"input.options\" data-ng-options=\"option.value as (option.name || option.text || option.value) for option in options\" class=\"{{inputClass}}\"></select>\n  <textarea data-ng-switch-when=\"textarea\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\"></textarea>\n  <input data-ng-switch-default name=\"{{input.name}}\" data-ng-model=\"input.$model\" type=\"{{input.type}}\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\" />\n</div>\n");
+require.define("ng-hyper/templates/inputs.html", "<div data-ng-class=\"{'ng-hyper-loading': !input, 'ng-hyper-loaded': input}\" data-ng-switch=\"input.type\">\n  <select data-ng-switch-when=\"select\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" data-ng-options=\"option.value as (option.name || option.text || option.value) for option in options\" class=\"{{inputClass}}\"></select>\n  <textarea data-ng-switch-when=\"textarea\" name=\"{{input.name}}\" data-ng-model=\"input.$model\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\"></textarea>\n  <input data-ng-switch-default name=\"{{input.name}}\" data-ng-model=\"input.$model\" type=\"{{input.type}}\" placeholder=\"{{placeholder || input.prompt || input.title || input.name}}\" data-ng-required=\"input.required\" data-ng-disabled=\"input.disabled\" class=\"{{inputClass}}\" />\n</div>\n");
 
 if (typeof exports == "object") {
   module.exports = require("ng-hyper");

@@ -170,6 +170,31 @@ describe('directives', function() {
       expect(elem.length).toBe(1);
       expect(elem.children().length).toBe($scope.input.options.length + 1); // angular adds an empty option by default
     });
+
+    it('should follow links in options', function() {
+      $scope.input = {
+        type: 'select',
+        options: [
+          {
+            text: {
+              href: '/api/translations#first'
+            },
+            value: 'first'
+          },
+          {
+            text: {
+              href: '/api/translations#second'
+            },
+            value: 'second'
+          }
+        ]
+      };
+
+      var elem = unwrapElement(html('<input hyper-input="input" />'));
+
+      expect(elem.children()[1].innerHTML).toBe('FIRST');
+      expect(elem.children()[2].innerHTML).toBe('SECOND');
+    });
   });
 
   describe('hyper-link', function() {
@@ -283,6 +308,14 @@ describe('directives', function() {
         items: {
           href: '/api/items'
         }
+      });
+
+    $http
+      .when('GET', '/api/translations')
+      .respond({
+        href: '/api/translations',
+        first: 'FIRST',
+        second: 'SECOND'
       });
 
     $http
