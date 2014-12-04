@@ -43,7 +43,7 @@ pkg.factory('hyper', [
         fn(value, req);
       });
 
-      if ($scope.$on) {
+      if ($scope && $scope.$on) {
         $scope.$on('$destroy', function() {
           req.off();
         });
