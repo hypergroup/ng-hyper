@@ -1596,10 +1596,9 @@ var isCrossDomain = require("component~url@0.2.0").isCrossDomain;
 pkg.controller('HyperController', [
   '$scope',
   '$routeParams',
-  '$exceptionHandler',
   'hyper',
   'hyperLinkFormatter',
-  function HyperController($scope, $routeParams, $exceptionHandler, hyper, hyperLinkFormatter) {
+  function HyperController($scope, $routeParams, hyper, hyperLinkFormatter) {
     // keep track of current the subscriptions
     var scopes = {};
 
@@ -1632,9 +1631,9 @@ pkg.controller('HyperController', [
         // if it doesn't look like a url don't do anything with it
         if (href.indexOf('http') !== 0 && href.indexOf('/') !== 0) return;
 
-        if (isCrossDomain(href)) {
-          return $exceptionHandler(new Error('Cross-domain requests are forbidden'));
-        }
+        // don't allow CORS attacks
+        // TODO give an error message
+        // if (isCrossDomain(href)) return;
 
         var requestScope = scopes[key] = $scope.$new(true);
         requestScope.value = {href: href};
