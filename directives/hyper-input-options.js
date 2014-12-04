@@ -16,7 +16,7 @@ pkg.directive('hyperInputOptions', [
         hyper.get(attrs.hyperInputOptions, $scope, function(options) {
           $scope.options = options = options || [];
           angular.forEach(options, function(opt) {
-            var scope = {options: opt};
+            if (!opt) return;
 
             function set(key) {
               hyper.get(key, opt, function(val) {
