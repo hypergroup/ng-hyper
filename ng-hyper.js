@@ -2302,7 +2302,7 @@ pkg.factory('hyper', [
         req.scope(req._root);
       }, true);
 
-      if ($scope) req.scope($scope);
+      if ($scope && !$scope.$watch) req.scope($scope);
 
       // listen to any updates from the api
       req.on(function(err, value) {
