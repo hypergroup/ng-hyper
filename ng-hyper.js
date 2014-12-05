@@ -1742,8 +1742,8 @@ pkg.directive('hyperForm', [
           $scope.values = {};
           $scope.inputs = getInputs(config.input, $scope);
 
-          $scope.set = initSet($scope.inputs);
-          $scope.submit = initSubmit(config.method, config.action);
+          var set = $scope.set = initSet($scope.inputs);
+          $scope.submit = initSubmit(config.method, config.action, set);
           $scope.reset = initReset($scope.inputs);
 
           return status.loaded(elem);
@@ -1810,17 +1810,22 @@ pkg.directive('hyperForm', [
 
         function initSet(inputs) {
           return function set(name, value) {
+            $scope.values[name] = value;
             if (inputs[name]) inputs[name].$model = value;
           };
         }
 
-        function initSubmit(method, action) {
+        function initSubmit(method, action, set) {
           method = (method || 'GET').toUpperCase();
-          return function submit() {
+          return function submit(additional) {
             // TODO if the method is idempotent and the form is pristine don't submit
 
             // don't submit if form is in progress
             if ($scope.hyperFormLoading || form.$invalid) return;
+
+            angular.forEach(additional || {}, function(value, key) {
+              set(key, value);
+            });
 
             $scope.hyperFormLoading = true;
             elem.addClass('ng-hyper-form-loading');
