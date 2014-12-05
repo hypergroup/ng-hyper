@@ -41,7 +41,7 @@ pkg.directive('hyperForm', [
         });
 
         function setup(config) {
-          //if (!canUpdate()) return;
+          if (!canUpdate()) return;
 
           // TODO fix the unwatch the second time it loads
           // unwatch($scope.inputs);
@@ -105,7 +105,6 @@ pkg.directive('hyperForm', [
         function initSetValue (inputs) {
           return function setValue(name, value) {
             $scope.values[name] = value;
-            if (inputs[name].$orig !== value) form.$setDirty();
           };
         }
 
