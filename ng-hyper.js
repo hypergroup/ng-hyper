@@ -2056,8 +2056,16 @@ pkg.directive('hyperInputOptions', [
     return {
       link: function ($scope, el, attrs) {
         hyper.get(attrs.hyperInputOptions, $scope, function(options) {
-          $scope.options = options = options || [];
-          angular.forEach(options, function(opt) {
+          $scope.options = options || [];
+          fetch();
+        });
+
+        $scope.$watch('options[0].text', function(val) {
+          if (typeof val === 'object' && val.href) fetch();
+        });
+
+        function fetch() {
+          angular.forEach($scope.options || [], function(opt) {
             if (!opt) return;
 
             function set(key) {
@@ -2070,9 +2078,8 @@ pkg.directive('hyperInputOptions', [
             }
 
             set('text');
-            set('value');
           });
-        });
+        }
       }
     };
   }
