@@ -18,6 +18,12 @@ pkg.value('hyperHttpRefreshHeaders', [
 ]);
 
 /**
+ * Firefox is the worst
+ */
+
+var isFirefox = !!~window.navigator.userAgent.indexOf('Firefox');
+
+/**
  * hyper backend http service
  */
 
@@ -91,17 +97,17 @@ pkg.factory('hyperBackend', [
 
           if (method === 'GET') return;
 
-          if (!disableRefresh) emitter.refresh(action);
+          if (!disableRefresh) emitter.refresh(action, !isFirefox);
           angular.forEach(refreshHeaders, function(header) {
             var href = headers(header);
-            if (href) emitter.refresh(href);
+            if (href) emitter.refresh(href, !isFirefox);
           });
 
           // http://tools.ietf.org/html/draft-nottingham-linked-cache-inv-03#section-3
           var invalidates = links.invalidates;
           invalidates = typeof invalidates === 'string' ? [invalidates] : invalidates;
           angular.forEach(invalidates || [], function(href) {
-            emitter.refresh(href);
+            emitter.refresh(href, !isFirefox);
           });
         })
         .error(function(err) {
@@ -137,20 +143,22 @@ pkg.factory('hyperHttpEmitter', [
       };
     };
 
-    emitter.refresh = function (href) {
+    emitter.refresh = function (href, shouldNotify) {
       if (!cache) cache = $cache.get('hyperHttpCache');
       // bust the cache for everyone
       cache.remove(href);
       var req = {
         headers: {
-          'cache-control': 'no-cache'
+          'cache-control': 'no-cache, must-revalidate',
+          'pragma': 'no-cache'
         },
-        cache: false
+        cache: cache
       };
 
       $http.get(href, req)
         .success(function(body, status, headers) {
-          subs.emit(href, body);
+          if (shouldNotify) subs.emit(href, body);
+          else emitter.refresh(href, true);
         })
         .error(function(err) {
           console.error(err.stack || err);
