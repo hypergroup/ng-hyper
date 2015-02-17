@@ -19,7 +19,7 @@ pkg.directive('hyperRedirect', [
 
         hyperLink.watch(attrs.hyperRedirect, $scope, function(href) {
           if (attrs.replace !== 'false') $location.replace();
-          $location.path(href);
+          $location.url(href);
         });
       }
     };
