@@ -25,15 +25,16 @@ pkg.directive('hyperLink', [
 
         var href = attrs.hyperLink;
         var isActive = false;
+        var showActive = !attrs.hyperLinkDisableActive;
 
         // watch the location and add an active class
-        $scope.$on('$locationChangeSuccess', updateActive);
+        if (showActive) $scope.$on('$locationChangeSuccess', updateActive);
 
         hyperLink.watch(href, $scope, function(formatted) {
           href = formatted;
           elem.attr('href', formatted);
           status.loaded(elem);
-          updateActive();
+          if (showActive) updateActive();
         });
 
         function updateActive() {
