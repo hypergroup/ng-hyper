@@ -38,17 +38,20 @@ pkg.directive('hyperLink', [
         });
 
         function updateActive() {
-          if (isActive) return setInactive();
           var location = $location.url() || '/';
-          if (href === location || '/' + href === location) return setActive();
+          return (href === location || '/' + href === location) ?
+            setActive() :
+            setInactive();
         }
 
         function setActive() {
+          if (isActive) return;
           elem.addClass('active');
           isActive = true;
         }
 
         function setInactive() {
+          if (!isActive) return;
           elem.removeClass('active');
           isActive = false;
         }
