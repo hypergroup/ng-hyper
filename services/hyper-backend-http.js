@@ -150,7 +150,9 @@ pkg.factory('hyperHttpEmitter', [
       var req = {
         headers: {
           'cache-control': 'no-cache, must-revalidate',
-          'pragma': 'no-cache'
+          'pragma': 'no-cache',
+          'expires': '-1',
+          'if-modified-since': '-1'
         },
         cache: cache
       };
